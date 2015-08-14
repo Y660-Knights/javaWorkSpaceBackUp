@@ -1,0 +1,789 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;*******************************************************
+                       *************************
+    2 00000000         ;* @file      startup_ht32f175x_275x.s
+    3 00000000         ;* @version   V1.00
+    4 00000000         ;* @date      12/05/2012
+    5 00000000         ;* @brief     CMSIS Cortex-M3 Core Device Startup File f
+                       or the
+    6 00000000         ;*            Holtek HT32F175x/275x Device Series
+    7 00000000         ;*
+    8 00000000         ;* @note      Copyright (C) 2011 Holtek Semiconductor In
+                       c. All rights reserved.
+    9 00000000         ;*
+   10 00000000         ;* <h2><center>&copy; COPYRIGHT 2012 Holtek</center></h2
+                       >
+   11 00000000         ;*
+   12 00000000         ;*******************************************************
+                       *************************
+   13 00000000         ;*----------- <<< Use Configuration Wizard in Context Me
+                       nu >>> ------------------
+   14 00000000         ;*******************************************************
+                       *************************
+   15 00000000         
+   16 00000000         ; Amount of memory (in bytes) allocated for Stack and He
+                       ap
+   17 00000000         ; Tailor those values to your application needs
+   18 00000000         ;// <h> Stack Configuration
+   19 00000000         ;//   <o> Stack Size (in Bytes) <0-65536:8>
+   20 00000000         ;// </h>
+   21 00000000 00000800 
+                       Stack_Size
+                               EQU              (1024*2)
+   22 00000000         
+   23 00000000                 AREA             STACK, NOINIT, READWRITE, ALIGN
+ = 3
+   24 00000000         Stack_Mem
+                               SPACE            Stack_Size
+   25 00000800         __initial_sp
+   26 00000800         
+   27 00000800         ;// <h> Heap Configuration
+   28 00000800         ;//   <o>  Heap Size (in Bytes) <0-65536:8>
+   29 00000800         ;// </h>
+   30 00000800 00000800 
+                       Heap_Size
+                               EQU              2048
+   31 00000800         
+   32 00000800                 AREA             HEAP, NOINIT, READWRITE, ALIGN 
+= 3
+   33 00000000         __heap_base
+   34 00000000         Heap_Mem
+                               SPACE            Heap_Size
+   35 00000800         __heap_limit
+   36 00000800         
+   37 00000800         
+   38 00000800                 PRESERVE8
+   39 00000800                 THUMB
+   40 00000800         
+   41 00000800         ;*******************************************************
+                       ************************
+   42 00000800         ; Fill-up the Vector Table entries with the exceptions I
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                       SR address
+   43 00000800         ;*******************************************************
+                       ************************
+   44 00000800                 AREA             RESET, CODE, READONLY
+   45 00000000                 EXPORT           __Vectors
+   46 00000000         
+   47 00000000 00000000 
+                       __Vectors
+                               DCD              __initial_sp ; Top address of S
+                                                            tack
+   48 00000004 00000000        DCD              Reset_Handler ; Reset Handler
+   49 00000008 00000000        DCD              HardFault_Handler ; NMI Handler
+                                                            
+   50 0000000C 00000000        DCD              HardFault_Handler ; Hard Fault 
+                                                            Handler
+   51 00000010 00000000        DCD              HardFault_Handler ; Memory Mana
+                                                            gement Fault Handle
+                                                            r
+   52 00000014 00000000        DCD              HardFault_Handler 
+                                                            ; Bus Fault Handler
+                                                            
+   53 00000018 00000000        DCD              HardFault_Handler ; Usage Fault
+                                                             Handler
+   54 0000001C 00000000        DCD              0           ; Reserved
+   55 00000020         ;DCD  0                                  ; Reserved
+   56 00000020         ;DCD  0                                  ; Reserved
+   57 00000020         ;DCD  0                                  ; Reserved
+   58 00000020         ;DCD  SVC_Handler                        ; SVC Handler
+   59 00000020         ;DCD  DebugMon_Handler                   ; Debug Monitor
+                        Handler
+   60 00000020         ;DCD  0                                  ; Reserved
+   61 00000020         ;DCD  PendSV_Handler                     ; PendSV Handle
+                       r
+   62 00000020         ;DCD  SysTick_Handler                    ; SysTick Handl
+                       er
+   63 00000020         
+   64 00000020         ; External Interrupt Handler
+   65 00000020         ;DCD  CKRDY_IRQHandler
+   66 00000020         ;DCD  LVD_IRQHandler
+   67 00000020         ;DCD  BOD_IRQHandler
+   68 00000020         ;DCD  WDT_IRQHandler
+   69 00000020         ;DCD  RTC_IRQHandler
+   70 00000020         ;DCD  FLASH_IRQHandler
+   71 00000020         ;DCD  EVWUP_IRQHandler
+   72 00000020         ;DCD  LPWUP_IRQHandler
+   73 00000020         ;DCD  EXTI0_IRQHandler
+   74 00000020         ;DCD  EXTI1_IRQHandler
+   75 00000020         ;DCD  EXTI2_IRQHandler
+   76 00000020         ;DCD  EXTI3_IRQHandler
+   77 00000020         ;DCD  EXTI4_IRQHandler
+   78 00000020         ;DCD  EXTI5_IRQHandler
+   79 00000020         ;DCD  EXTI6_IRQHandler
+   80 00000020         ;DCD  EXTI7_IRQHandler
+   81 00000020         ;DCD  EXTI8_IRQHandler
+   82 00000020         ;DCD  EXTI9_IRQHandler
+   83 00000020         ;DCD  EXTI10_IRQHandler
+   84 00000020         ;DCD  EXTI11_IRQHandler
+   85 00000020         ;DCD  EXTI12_IRQHandler
+   86 00000020         ;DCD  EXTI13_IRQHandler
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   87 00000020         ;DCD  EXTI14_IRQHandler
+   88 00000020         ;DCD  EXTI15_IRQHandler
+   89 00000020         ;DCD  COMP_IRQHandler
+   90 00000020         ;DCD  ADC_IRQHandler
+   91 00000020         ;DCD  0
+   92 00000020         ;DCD  MCTM0BRK_IRQHandler
+   93 00000020         ;DCD  MCTM0UP_IRQHandler
+   94 00000020         ;DCD  MCTM0TR_IRQHandler
+   95 00000020         ;DCD  MCTM0CC_IRQHandler
+   96 00000020         ;DCD  MCTM1BRK_IRQHandler
+   97 00000020         ;DCD  MCTM1UP_IRQHandler
+   98 00000020         ;DCD  MCTM1TR_IRQHandler
+   99 00000020         ;DCD  MCTM1CC_IRQHandler
+  100 00000020         ;DCD  GPTM0_IRQHandler
+  101 00000020         ;DCD  GPTM1_IRQHandler
+  102 00000020         ;DCD  0
+  103 00000020         ;DCD  0
+  104 00000020         ;DCD  0
+  105 00000020         ;DCD  0
+  106 00000020         ;DCD  BFTM0_IRQHandler
+  107 00000020         ;DCD  BFTM1_IRQHandler
+  108 00000020         ;DCD  I2C0_IRQHandler
+  109 00000020         ;DCD  I2C1_IRQHandler
+  110 00000020         ;DCD  SPI0_IRQHandler
+  111 00000020         ;DCD  SPI1_IRQHandler
+  112 00000020         ;DCD  USART0_IRQHandler
+  113 00000020         ;DCD  USART1_IRQHandler
+  114 00000020         ;DCD  UART0_IRQHandler
+  115 00000020         ;DCD  UART1_IRQHandler
+  116 00000020         ;DCD  SCI_IRQHandler
+  117 00000020         ;DCD  I2S_IRQHandler
+  118 00000020         ;DCD  USB_IRQHandler
+  119 00000020         ;DCD  0
+  120 00000020         ;DCD  PDMA_CH0_IRQHandler
+  121 00000020         ;DCD  PDMA_CH1_IRQHandler
+  122 00000020         ;DCD  PDMA_CH2_IRQHandler
+  123 00000020         ;DCD  PDMA_CH3_IRQHandler
+  124 00000020         ;DCD  PDMA_CH4_IRQHandler
+  125 00000020         ;DCD  PDMA_CH5_IRQHandler
+  126 00000020         ;DCD  PDMA_CH6_IRQHandler
+  127 00000020         ;DCD  PDMA_CH7_IRQHandler
+  128 00000020         ;DCD  0
+  129 00000020         ;DCD  0
+  130 00000020         ;DCD  0
+  131 00000020         ;DCD  0
+  132 00000020         ;DCD  0
+  133 00000020         ;DCD  EBI_IRQHandler
+  134 00000020         
+  135 00000020                 AREA             |.ARM.__AT_0x0000003C|, CODE, R
+EADONLY
+  136 00000000                 IMPORT           SysTick_Handler
+  137 00000000 00000000        DCD              SysTick_Handler
+  138 00000004         
+  139 00000004                 AREA             |.ARM.__AT_0x000000E4|, CODE, R
+EADONLY
+  140 00000000 00000000        DCD              BFTM0_IRQHandler
+  141 00000004 00000000        DCD              BFTM1_IRQHandler
+  142 00000008 00000000        DCD              I2C0_IRQHandler
+  143 0000000C 00000000        DCD              I2C1_IRQHandler
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  144 00000010         
+  145 00000010                 AREA             |.ARM.__AT_0x00000114|, CODE, R
+EADONLY
+  146 00000000                 IMPORT           USB_IRQHandler
+  147 00000000 00000000        DCD              USB_IRQHandler
+  148 00000004         
+  149 00000004         ; Reset handler routine
+  150 00000004         Reset_Handler
+                               PROC
+  151 00000004                 EXPORT           Reset_Handler                  
+ [WEAK]
+  152 00000004                 IMPORT           WDT_Configuration
+  153 00000004                 IMPORT           SystemInit
+  154 00000004                 IMPORT           __main
+  155 00000004 4803            LDR              R0, =WDT_Configuration
+  156 00000006 4780            BLX              R0
+  157 00000008 4803            LDR              R0, =SystemInit
+  158 0000000A 4780            BLX              R0
+  159 0000000C 4803            LDR              R0, =__main
+  160 0000000E 4700            BX               R0
+  161 00000010                 ENDP
+  162 00000010         
+  163 00000010         ; Dummy Exception Handlers
+  164 00000010         ;NMI_Handler         PROC
+  165 00000010         ;                    EXPORT  NMI_Handler                
+                            [WEAK]
+  166 00000010         ;                    B       .
+  167 00000010         ;                    ENDP
+  168 00000010         
+  169 00000010         HardFault_Handler
+                               PROC
+  170 00000010                 EXPORT           HardFault_Handler              
+ [WEAK]
+  171 00000010 E7FE            B                .
+  172 00000012                 ENDP
+  173 00000012         
+  174 00000012         ;MemManage_Handler   PROC
+  175 00000012         ;                    EXPORT  MemManage_Handler          
+                            [WEAK]
+  176 00000012         ;                    B       .
+  177 00000012         ;                    ENDP
+  178 00000012         
+  179 00000012         ;BusFault_Handler    PROC
+  180 00000012         ;                    EXPORT  BusFault_Handler           
+                            [WEAK]
+  181 00000012         ;                    B       .
+  182 00000012         ;                    ENDP
+  183 00000012         
+  184 00000012         ;UsageFault_Handler  PROC
+  185 00000012         ;                    EXPORT  UsageFault_Handler         
+                            [WEAK]
+  186 00000012         ;                    B       .
+  187 00000012         ;                    ENDP
+  188 00000012         
+  189 00000012         ;SVC_Handler         PROC
+  190 00000012         ;                    EXPORT  SVC_Handler                
+                            [WEAK]
+  191 00000012         ;                    B       .
+  192 00000012         ;                    ENDP
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  193 00000012         
+  194 00000012         ;DebugMon_Handler    PROC
+  195 00000012         ;                    EXPORT  DebugMon_Handler           
+                            [WEAK]
+  196 00000012         ;                    B       .
+  197 00000012         ;                    ENDP
+  198 00000012         
+  199 00000012         ;PendSV_Handler      PROC
+  200 00000012         ;                    EXPORT  PendSV_Handler             
+                            [WEAK]
+  201 00000012         ;                    B       .
+  202 00000012         ;                    ENDP
+  203 00000012         
+  204 00000012         ;SysTick_Handler     PROC
+  205 00000012         ;                    EXPORT  SysTick_Handler            
+                            [WEAK]
+  206 00000012         ;                    B       .
+  207 00000012         ;                    ENDP
+  208 00000012         
+  209 00000012         Default_Handler
+                               PROC
+  210 00000012         ;                    EXPORT  CKRDY_IRQHandler           
+                            [WEAK]
+  211 00000012         ;                    EXPORT  LVD_IRQHandler             
+                            [WEAK]
+  212 00000012         ;                    EXPORT  BOD_IRQHandler             
+                            [WEAK]
+  213 00000012         ;                    EXPORT  WDT_IRQHandler             
+                            [WEAK]
+  214 00000012         ;                    EXPORT  RTC_IRQHandler             
+                            [WEAK]
+  215 00000012         ;                    EXPORT  FLASH_IRQHandler           
+                            [WEAK]
+  216 00000012         ;                    EXPORT  EVWUP_IRQHandler           
+                            [WEAK]
+  217 00000012         ;                    EXPORT  LPWUP_IRQHandler           
+                            [WEAK]
+  218 00000012         ;                    EXPORT  EXTI0_IRQHandler           
+                            [WEAK]
+  219 00000012         ;                    EXPORT  EXTI1_IRQHandler           
+                            [WEAK]
+  220 00000012         ;                    EXPORT  EXTI2_IRQHandler           
+                            [WEAK]
+  221 00000012         ;                    EXPORT  EXTI3_IRQHandler           
+                            [WEAK]
+  222 00000012         ;                    EXPORT  EXTI4_IRQHandler           
+                            [WEAK]
+  223 00000012         ;                    EXPORT  EXTI5_IRQHandler           
+                            [WEAK]
+  224 00000012         ;                    EXPORT  EXTI6_IRQHandler           
+                            [WEAK]
+  225 00000012         ;                    EXPORT  EXTI7_IRQHandler           
+                            [WEAK]
+  226 00000012         ;                    EXPORT  EXTI8_IRQHandler           
+                            [WEAK]
+  227 00000012         ;                    EXPORT  EXTI9_IRQHandler           
+                            [WEAK]
+  228 00000012         ;                    EXPORT  EXTI10_IRQHandler          
+                            [WEAK]
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  229 00000012         ;                    EXPORT  EXTI11_IRQHandler          
+                            [WEAK]
+  230 00000012         ;                    EXPORT  EXTI12_IRQHandler          
+                            [WEAK]
+  231 00000012         ;                    EXPORT  EXTI13_IRQHandler          
+                            [WEAK]
+  232 00000012         ;                    EXPORT  EXTI14_IRQHandler          
+                            [WEAK]
+  233 00000012         ;                    EXPORT  EXTI15_IRQHandler          
+                            [WEAK]
+  234 00000012         ;                    EXPORT  COMP_IRQHandler            
+                            [WEAK]
+  235 00000012         ;                    EXPORT  ADC_IRQHandler             
+                            [WEAK]
+  236 00000012         ;                    EXPORT  MCTM0BRK_IRQHandler   .... 
+                            [WEAK]
+  237 00000012         ;                    EXPORT  MCTM0UP_IRQHandler        .
+                       ...  [WEAK]
+  238 00000012         ;                    EXPORT  MCTM0TR_IRQHandler         
+                            [WEAK]
+  239 00000012         ;                    EXPORT  MCTM0CC_IRQHandler         
+                            [WEAK]
+  240 00000012         ;                    EXPORT  MCTM1BRK_IRQHandler        
+                            [WEAK]
+  241 00000012         ;                    EXPORT  MCTM1UP_IRQHandler         
+                            [WEAK]
+  242 00000012         ;                    EXPORT  MCTM1TR_IRQHandler         
+                            [WEAK]
+  243 00000012         ;                    EXPORT  MCTM1CC_IRQHandler         
+                            [WEAK]
+  244 00000012         ;                    EXPORT  GPTM0_IRQHandler           
+                            [WEAK]
+  245 00000012         ;                    EXPORT  GPTM1_IRQHandler           
+                            [WEAK]
+  246 00000012                 EXPORT           BFTM0_IRQHandler               
+  [WEAK]
+  247 00000012                 EXPORT           BFTM1_IRQHandler               
+  [WEAK]
+  248 00000012                 EXPORT           I2C0_IRQHandler                
+  [WEAK]
+  249 00000012                 EXPORT           I2C1_IRQHandler                
+  [WEAK]
+  250 00000012         ;                    EXPORT  SPI0_IRQHandler            
+                            [WEAK]
+  251 00000012         ;                    EXPORT  SPI1_IRQHandler            
+                            [WEAK]
+  252 00000012         ;                    EXPORT  USART0_IRQHandler          
+                            [WEAK]
+  253 00000012         ;                    EXPORT  USART1_IRQHandler          
+                            [WEAK]
+  254 00000012         ;                    EXPORT  UART0_IRQHandler           
+                            [WEAK]
+  255 00000012         ;                    EXPORT  UART1_IRQHandler           
+                            [WEAK]
+  256 00000012         ;                    EXPORT  SCI_IRQHandler             
+                            [WEAK]
+  257 00000012         ;                    EXPORT  I2S_IRQHandler             
+                            [WEAK]
+  258 00000012         ;                    EXPORT  USB_IRQHandler             
+
+
+
+ARM Macro Assembler    Page 7 
+
+
+                            [WEAK]
+  259 00000012         ;                    EXPORT  PDMA_CH0_IRQHandler        
+                            [WEAK]
+  260 00000012         ;                    EXPORT  PDMA_CH1_IRQHandler        
+                            [WEAK]
+  261 00000012         ;                    EXPORT  PDMA_CH2_IRQHandler        
+                            [WEAK]
+  262 00000012         ;                    EXPORT  PDMA_CH3_IRQHandler        
+                            [WEAK]
+  263 00000012         ;                    EXPORT  PDMA_CH4_IRQHandler        
+                            [WEAK]
+  264 00000012         ;                    EXPORT  PDMA_CH5_IRQHandler        
+                            [WEAK]
+  265 00000012         ;                    EXPORT  PDMA_CH6_IRQHandler        
+                            [WEAK]
+  266 00000012         ;                    EXPORT  PDMA_CH7_IRQHandler        
+                            [WEAK]
+  267 00000012         ;                    EXPORT  EBI_IRQHandler             
+                            [WEAK]
+  268 00000012         ;CKRDY_IRQHandler
+  269 00000012         ;LVD_IRQHandler
+  270 00000012         ;BOD_IRQHandler
+  271 00000012         ;WDT_IRQHandler
+  272 00000012         ;RTC_IRQHandler
+  273 00000012         ;FLASH_IRQHandler
+  274 00000012         ;EVWUP_IRQHandler
+  275 00000012         ;LPWUP_IRQHandler
+  276 00000012         ;EXTI0_IRQHandler
+  277 00000012         ;EXTI1_IRQHandler
+  278 00000012         ;EXTI2_IRQHandler
+  279 00000012         ;EXTI3_IRQHandler
+  280 00000012         ;EXTI4_IRQHandler
+  281 00000012         ;EXTI5_IRQHandler
+  282 00000012         ;EXTI6_IRQHandler
+  283 00000012         ;EXTI7_IRQHandler
+  284 00000012         ;EXTI8_IRQHandler
+  285 00000012         ;EXTI9_IRQHandler
+  286 00000012         ;EXTI10_IRQHandler
+  287 00000012         ;EXTI11_IRQHandler
+  288 00000012         ;EXTI12_IRQHandler
+  289 00000012         ;EXTI13_IRQHandler
+  290 00000012         ;EXTI14_IRQHandler
+  291 00000012         ;EXTI15_IRQHandler
+  292 00000012         ;COMP_IRQHandler
+  293 00000012         ;ADC_IRQHandler
+  294 00000012         ;MCTM0BRK_IRQHandler
+  295 00000012         ;MCTM0UP_IRQHandler
+  296 00000012         ;MCTM0TR_IRQHandler
+  297 00000012         ;MCTM0CC_IRQHandler
+  298 00000012         ;MCTM1BRK_IRQHandler
+  299 00000012         ;MCTM1UP_IRQHandler
+  300 00000012         ;MCTM1TR_IRQHandler
+  301 00000012         ;MCTM1CC_IRQHandler
+  302 00000012         ;GPTM0_IRQHandler
+  303 00000012         ;GPTM1_IRQHandler
+  304 00000012         BFTM0_IRQHandler
+  305 00000012         BFTM1_IRQHandler
+  306 00000012         I2C0_IRQHandler
+  307 00000012         I2C1_IRQHandler
+
+
+
+ARM Macro Assembler    Page 8 
+
+
+  308 00000012         ;SPI0_IRQHandler
+  309 00000012         ;SPI1_IRQHandler
+  310 00000012         ;USART0_IRQHandler
+  311 00000012         ;USART1_IRQHandler
+  312 00000012         ;UART0_IRQHandler
+  313 00000012         ;UART1_IRQHandler
+  314 00000012         ;SCI_IRQHandler
+  315 00000012         ;I2S_IRQHandler
+  316 00000012         ;USB_IRQHandler
+  317 00000012         ;PDMA_CH0_IRQHandler
+  318 00000012         ;PDMA_CH1_IRQHandler
+  319 00000012         ;PDMA_CH2_IRQHandler
+  320 00000012         ;PDMA_CH3_IRQHandler
+  321 00000012         ;PDMA_CH4_IRQHandler
+  322 00000012         ;PDMA_CH5_IRQHandler
+  323 00000012         ;PDMA_CH6_IRQHandler
+  324 00000012         ;PDMA_CH7_IRQHandler
+  325 00000012         ;EBI_IRQHandler
+  326 00000012 E7FE            B                .
+  327 00000014                 ENDP
+  328 00000014         
+  329 00000014                 ALIGN
+  330 00000014         
+  331 00000014         ;*******************************************************
+                       ************************
+  332 00000014         ; User Stack and Heap initialization
+  333 00000014         ;*******************************************************
+                       ************************
+  334 00000014                 IF               :DEF:__MICROLIB
+  335 00000014         
+  336 00000014                 EXPORT           __initial_sp
+  337 00000014                 EXPORT           __heap_base
+  338 00000014                 EXPORT           __heap_limit
+  339 00000014         
+  340 00000014                 ELSE
+  354                          ENDIF
+  355 00000014         
+  356 00000014                 END
+              00000000 
+              00000000 
+              00000000 
+Command Line: --debug --xref --cpu=Cortex-M3 --apcs=interwork --depend=.\iap\ob
+j\startup_ht32f165x_iap.d -o.\iap\obj\startup_ht32f165x_iap.o -IC:\Keil\ARM\RV3
+1\INC -IC:\Keil\ARM\CMSIS\Include -IC:\Keil\ARM\Inc\Holtek\HT32F1653_54 --prede
+fine="__MICROLIB SETA 1" --list=.\iap\list\startup_ht32f165x_iap.lst startup_ht
+32f165x_iap.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+STACK 00000000
+
+Symbol: STACK
+   Definitions
+      At line 23 in file startup_ht32f165x_iap.s
+   Uses
+      None
+Comment: STACK unused
+Stack_Mem 00000000
+
+Symbol: Stack_Mem
+   Definitions
+      At line 24 in file startup_ht32f165x_iap.s
+   Uses
+      None
+Comment: Stack_Mem unused
+__initial_sp 00000800
+
+Symbol: __initial_sp
+   Definitions
+      At line 25 in file startup_ht32f165x_iap.s
+   Uses
+      At line 47 in file startup_ht32f165x_iap.s
+      At line 336 in file startup_ht32f165x_iap.s
+
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+HEAP 00000000
+
+Symbol: HEAP
+   Definitions
+      At line 32 in file startup_ht32f165x_iap.s
+   Uses
+      None
+Comment: HEAP unused
+Heap_Mem 00000000
+
+Symbol: Heap_Mem
+   Definitions
+      At line 34 in file startup_ht32f165x_iap.s
+   Uses
+      None
+Comment: Heap_Mem unused
+__heap_base 00000000
+
+Symbol: __heap_base
+   Definitions
+      At line 33 in file startup_ht32f165x_iap.s
+   Uses
+      At line 337 in file startup_ht32f165x_iap.s
+Comment: __heap_base used once
+__heap_limit 00000800
+
+Symbol: __heap_limit
+   Definitions
+      At line 35 in file startup_ht32f165x_iap.s
+   Uses
+      At line 338 in file startup_ht32f165x_iap.s
+Comment: __heap_limit used once
+4 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+RESET 00000000
+
+Symbol: RESET
+   Definitions
+      At line 44 in file startup_ht32f165x_iap.s
+   Uses
+      None
+Comment: RESET unused
+__Vectors 00000000
+
+Symbol: __Vectors
+   Definitions
+      At line 47 in file startup_ht32f165x_iap.s
+   Uses
+      At line 45 in file startup_ht32f165x_iap.s
+Comment: __Vectors used once
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.ARM.__AT_0x0000003C 00000000
+
+Symbol: .ARM.__AT_0x0000003C
+   Definitions
+      At line 135 in file startup_ht32f165x_iap.s
+   Uses
+      None
+Comment: .ARM.__AT_0x0000003C unused
+1 symbol
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.ARM.__AT_0x000000E4 00000000
+
+Symbol: .ARM.__AT_0x000000E4
+   Definitions
+      At line 139 in file startup_ht32f165x_iap.s
+   Uses
+      None
+Comment: .ARM.__AT_0x000000E4 unused
+1 symbol
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.ARM.__AT_0x00000114 00000000
+
+Symbol: .ARM.__AT_0x00000114
+   Definitions
+      At line 145 in file startup_ht32f165x_iap.s
+   Uses
+      None
+Comment: .ARM.__AT_0x00000114 unused
+BFTM0_IRQHandler 00000012
+
+Symbol: BFTM0_IRQHandler
+   Definitions
+      At line 304 in file startup_ht32f165x_iap.s
+   Uses
+      At line 140 in file startup_ht32f165x_iap.s
+      At line 246 in file startup_ht32f165x_iap.s
+
+BFTM1_IRQHandler 00000012
+
+Symbol: BFTM1_IRQHandler
+   Definitions
+      At line 305 in file startup_ht32f165x_iap.s
+   Uses
+      At line 141 in file startup_ht32f165x_iap.s
+      At line 247 in file startup_ht32f165x_iap.s
+
+Default_Handler 00000012
+
+Symbol: Default_Handler
+   Definitions
+      At line 209 in file startup_ht32f165x_iap.s
+   Uses
+      None
+Comment: Default_Handler unused
+HardFault_Handler 00000010
+
+Symbol: HardFault_Handler
+   Definitions
+      At line 169 in file startup_ht32f165x_iap.s
+   Uses
+      At line 49 in file startup_ht32f165x_iap.s
+      At line 50 in file startup_ht32f165x_iap.s
+      At line 51 in file startup_ht32f165x_iap.s
+      At line 52 in file startup_ht32f165x_iap.s
+      At line 53 in file startup_ht32f165x_iap.s
+      At line 170 in file startup_ht32f165x_iap.s
+
+I2C0_IRQHandler 00000012
+
+Symbol: I2C0_IRQHandler
+   Definitions
+      At line 306 in file startup_ht32f165x_iap.s
+   Uses
+      At line 142 in file startup_ht32f165x_iap.s
+      At line 248 in file startup_ht32f165x_iap.s
+
+I2C1_IRQHandler 00000012
+
+Symbol: I2C1_IRQHandler
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+   Definitions
+      At line 307 in file startup_ht32f165x_iap.s
+   Uses
+      At line 143 in file startup_ht32f165x_iap.s
+      At line 249 in file startup_ht32f165x_iap.s
+
+Reset_Handler 00000004
+
+Symbol: Reset_Handler
+   Definitions
+      At line 150 in file startup_ht32f165x_iap.s
+   Uses
+      At line 48 in file startup_ht32f165x_iap.s
+      At line 151 in file startup_ht32f165x_iap.s
+
+8 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+Heap_Size 00000800
+
+Symbol: Heap_Size
+   Definitions
+      At line 30 in file startup_ht32f165x_iap.s
+   Uses
+      At line 34 in file startup_ht32f165x_iap.s
+Comment: Heap_Size used once
+Stack_Size 00000800
+
+Symbol: Stack_Size
+   Definitions
+      At line 21 in file startup_ht32f165x_iap.s
+   Uses
+      At line 24 in file startup_ht32f165x_iap.s
+Comment: Stack_Size used once
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+SysTick_Handler 00000000
+
+Symbol: SysTick_Handler
+   Definitions
+      At line 136 in file startup_ht32f165x_iap.s
+   Uses
+      At line 137 in file startup_ht32f165x_iap.s
+Comment: SysTick_Handler used once
+SystemInit 00000000
+
+Symbol: SystemInit
+   Definitions
+      At line 153 in file startup_ht32f165x_iap.s
+   Uses
+      At line 157 in file startup_ht32f165x_iap.s
+Comment: SystemInit used once
+USB_IRQHandler 00000000
+
+Symbol: USB_IRQHandler
+   Definitions
+      At line 146 in file startup_ht32f165x_iap.s
+   Uses
+      At line 147 in file startup_ht32f165x_iap.s
+Comment: USB_IRQHandler used once
+WDT_Configuration 00000000
+
+Symbol: WDT_Configuration
+   Definitions
+      At line 152 in file startup_ht32f165x_iap.s
+   Uses
+      At line 155 in file startup_ht32f165x_iap.s
+Comment: WDT_Configuration used once
+__main 00000000
+
+Symbol: __main
+   Definitions
+      At line 154 in file startup_ht32f165x_iap.s
+   Uses
+      At line 159 in file startup_ht32f165x_iap.s
+Comment: __main used once
+5 symbols
+359 symbols in table
