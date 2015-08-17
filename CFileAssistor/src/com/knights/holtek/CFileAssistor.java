@@ -12,8 +12,9 @@ import java.util.regex.Pattern;
 
 public class CFileAssistor {
 
-	//private String path = "E:\\share\\progTemp\\working\\LCM_SSD1963_800x480_1.1\\LCM_SSD1963_5Inch_HT32_LCD_DVK_Demo\\showText.c";
-	private String path = "E:\\share\\progTemp\\working\\LCM_SSD1963_800x480_1.1\\LCM_SSD1963_5Inch_HT32_LCD_DVK_Demo\\QuickPlantPic.c";
+	private String path = "E:\\share\\progTemp\\working\\LCM_SSD1963_800x480_1.1\\LCM_SSD1963_5Inch_HT32_LCD_DVK_Demo\\showText.c";
+	//private String path = "E:\\share\\progTemp\\working\\LCM_SSD1963_800x480_1.1\\LCM_SSD1963_5Inch_HT32_LCD_DVK_Demo\\QuickPlantPic.c";
+	//private String path = "E:\\share\\progTemp\\working\\LCM_SSD1963_800x480_1.1\\LCM_SSD1963_5Inch_HT32_LCD_DVK_Demo\\QuickPlant.c";
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
