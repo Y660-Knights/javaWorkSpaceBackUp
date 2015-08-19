@@ -38,7 +38,7 @@ public class HFile {
 	}
 	
 	public void addInclude(String include) {
-		this.include += "#include\t" + include + "\r\n\r\n";
+		this.include += "#include\t\"" + include + "\"\r\n\r\n";
 	}
 
 }

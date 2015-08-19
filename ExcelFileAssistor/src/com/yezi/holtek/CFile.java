@@ -7,7 +7,7 @@ public class CFile {
 	private FileAssistor fa;
 	private String path;
 	private List<Function> functions;
-	private String include;
+	private String include = "";
 	
 	public CFile (String path) {
 		if(this.functions == null) {
@@ -36,7 +36,7 @@ public class CFile {
 	}
 
 	public void addInclude(String include) {
-		this.include += "#include\t" + include + "\r\n";
+		this.include += "#include\t\"" + include + "\"\r\n\r\n";
 	}
 	
 }

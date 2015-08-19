@@ -38,7 +38,7 @@ public class TestCFile {
 			this.fa = new FileAssistor(path + "\\Test" + name + ".c");
 		content += "void startTets(void)\r\n{\r\n";		
 		content +=this.getContent()+"\r\n";
-		content += "\r\n}";
+		content += "\r\n}\r\n";
 		fa.outputFile(content);
 	}
 
@@ -47,6 +47,6 @@ public class TestCFile {
 	}
 	
 	public void addInclude(String include) {
-		this.include += "#include\t" + include + "\r\n\r\n";
+		this.include += "#include\t\"" + include + "\"\r\n\r\n";
 	}
 }

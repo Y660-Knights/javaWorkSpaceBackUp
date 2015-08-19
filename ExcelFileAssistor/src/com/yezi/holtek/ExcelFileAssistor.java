@@ -26,6 +26,9 @@ public class ExcelFileAssistor {
 		FileAssistor fa = new FileAssistor(path);
 		List<File>  files =  fa.getPathFile();
 		
+/*		String t = "1645s6\"4sssfs\"fjksdlfjdskl\"fdsjf\"fdsjklf";
+		System.out.println(dealString(t));*/
+		
 		for(File file : files) {
 			Workbook wb;
 			try {
@@ -52,19 +55,24 @@ public class ExcelFileAssistor {
 		                f.setReturnValue("void");
 		                f.setParameters("void");
 		                cell = sheet.getCell(j,i+1);
-		                fb.addInvoke(showTextFunctionName + "("+textPositionX+"," + textPositionY + "," + "ZH_X0E,HangGao," + "\"" + cell.getContents()+ "\"" +");");		                
+		                temp = cell.getContents();
+		                
+		                temp = dealString(temp);
+		                
+		                fb.addInvoke(showTextFunctionName + "("+textPositionX+"," + textPositionY + "," + "ZH_X0E,HangGao," + "\"" + temp+ "\"" +");");		                
 		                f.setBody(fb);
 		                cf.addFunction(f);
 		                hf.addFunction(f);
 		                testCF.addFunction(f);
 		            }		            
 		        }
-		        String name = "" + System.currentTimeMillis();
+		        String name = sheet.getName();
 		        cf.addInclude(name + ".h");
 		        cf.createFile(name);
 		        hf.addInclude("showText.h");
 		        hf.createFile(name);
 		        testCF.addInclude(name + ".h");
+		        testCF.addInclude("key.h");
 		        testCF.setContinueFunction("while(GetKey() != KEY_DOWN_KEY2);");
 		        testCF.createFile(name);
 		       System.out.println(cf.getContent());
@@ -75,6 +83,25 @@ public class ExcelFileAssistor {
 				e.printStackTrace();
 			}	        
 		}		
+	}
+	
+	private String dealString(String s) {
+		StringBuffer sb = new StringBuffer(s);
+		int index,count = 0;
+		index = sb.indexOf("\"");
+		while(index != -1) {
+			count++;
+			if(count % 2 == 0) {
+				sb.replace(index, index + 1, "^");
+			}				
+			else{ //1
+				sb.insert(index , "\\");
+			}
+			sb = new StringBuffer(sb);	
+			index = sb.indexOf("\"",index + 2);
+		}
+		
+		return sb.toString();
 	}
 
 }
