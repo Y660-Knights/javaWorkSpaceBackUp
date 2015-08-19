@@ -7,7 +7,7 @@ public class TestCFile {
 	private FileAssistor fa;
 	private String path;
 	private List<Function> functions;
-	private String continueFunction;
+	private String continueFunction = "";
 	private String include = "";
 	
 	public TestCFile (String path) {
@@ -26,7 +26,7 @@ public class TestCFile {
 		content += "\r\n";
 		for(Function f : this.functions) {			
 			content += "\t" + f.getFunctionCall() + "\r\n";
-			content += "\t" + continueFunction+ "\r\n";
+			content += continueFunction;
 		}
 		return content;
 	}
@@ -36,14 +36,14 @@ public class TestCFile {
 		content += this.include;
 		if(this.fa == null)
 			this.fa = new FileAssistor(path + "\\Test" + name + ".c");
-		content += "void startTets(void)\r\n{\r\n";		
+		content += "void startTest(void)\r\n{\r\n";		
 		content +=this.getContent()+"\r\n";
 		content += "\r\n}\r\n";
 		fa.outputFile(content);
 	}
 
-	public void setContinueFunction(String continueFunction) {
-		this.continueFunction = continueFunction;
+	public void addContinueFunction(String continueFunction) {
+		this.continueFunction += "\t" + continueFunction+ "\r\n";
 	}
 	
 	public void addInclude(String include) {

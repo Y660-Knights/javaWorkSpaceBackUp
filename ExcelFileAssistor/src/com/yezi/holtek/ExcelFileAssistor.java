@@ -73,7 +73,9 @@ public class ExcelFileAssistor {
 		        hf.createFile(name);
 		        testCF.addInclude(name + ".h");
 		        testCF.addInclude("key.h");
-		        testCF.setContinueFunction("while(GetKey() != KEY_DOWN_KEY2);");
+		        testCF.addInclude("lcd_display.h");
+		        testCF.addContinueFunction("while(GetKey() != KEY_DOWN_KEY2);");
+		        testCF.addContinueFunction("LCD_Clear(White);");
 		        testCF.createFile(name);
 		       System.out.println(cf.getContent());
 		       System.out.println(hf.getContent());
