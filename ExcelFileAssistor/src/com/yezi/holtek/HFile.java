@@ -9,7 +9,6 @@ public class HFile {
 	private String path;
 	private List<Function> functions;
 	private String include = "";
-	private String define = "";
 	
 	public HFile (String path) {
 		if(this.functions == null) {

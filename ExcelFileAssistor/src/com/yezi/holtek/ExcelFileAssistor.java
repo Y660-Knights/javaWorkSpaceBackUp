@@ -32,7 +32,9 @@ public class ExcelFileAssistor {
 				wb = Workbook.getWorkbook(file);//从文件流中取得Excel工作区对象
 				Sheet sheet = wb.getSheet(0);//从工作区中取得页，取得这个对象的时候既可以用名称来获得，也可以用序号。
 				CFile cf = new CFile(file.getParent());
-				HFile hf = new HFile(file.getParent());				
+				HFile hf = new HFile(file.getParent());
+				TestCFile testCF = new TestCFile(file.getParent());
+				
 //System.out.println(file.getParent());
 		        for(int i=1; i < sheet.getRows(); i+=2){
 		            for(int j=1; j < sheet.getColumns(); j++){
@@ -54,6 +56,7 @@ public class ExcelFileAssistor {
 		                f.setBody(fb);
 		                cf.addFunction(f);
 		                hf.addFunction(f);
+		                testCF.addFunction(f);
 		            }		            
 		        }
 		        String name = "" + System.currentTimeMillis();
@@ -61,8 +64,12 @@ public class ExcelFileAssistor {
 		        cf.createFile(name);
 		        hf.addInclude("showText.h");
 		        hf.createFile(name);
+		        testCF.addInclude(name + ".h");
+		        testCF.setContinueFunction("while(GetKey() != KEY_DOWN_KEY2);");
+		        testCF.createFile(name);
 		       System.out.println(cf.getContent());
 		       System.out.println(hf.getContent());
+		       System.out.println(testCF.getContent());
 			} catch (BiffException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

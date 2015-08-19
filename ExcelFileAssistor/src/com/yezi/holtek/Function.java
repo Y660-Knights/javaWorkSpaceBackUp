@@ -55,5 +55,8 @@ public class Function {
 		this.body = body;
 	}
 	
+	public String getFunctionCall(){
+		return this.name + "();";
+	}
 	
 }
