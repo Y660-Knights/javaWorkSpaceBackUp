@@ -41,17 +41,38 @@ public class Test {
 			
 		//获取doc中的一行
 		Pattern p = Pattern.compile("\\r\\n.+");
-		Matcher m = p.matcher(str);		
-		while(m.find()){
+		Matcher m = p.matcher(str);
+		
+		int matchCount = 0;		
+		Pattern p1 = Pattern.compile("Register ?\\d? ?\\((\\w+)\\)");
+		
+		while(m.find()) {
+			String line = m.group().trim();			
+			Matcher m1 = p1.matcher(line);	
+			if(m1.find()) {
+				matchCount ++;
+			}			
+		}
+		
+		if(matchCount > 2) { //最少有两个寄存器,说明该表达式正确
+			p1 = Pattern.compile("Register ?\\d? ?\\((\\w+)\\)");
+			System.out.println("Reg count = " + matchCount); 
+		}else { //更换表达式
+			p1 = Pattern.compile("Register ?\\d? ?– ?\\(?(\\w+)\\)?");
+		}
+		
+		m = p.matcher(str);
+		while(m.find()) {
 			//去掉换行符等特殊符号
 			String line = m.group().trim();			
 	//		System.out.println(line);
 			line = m.group().trim();
-			Pattern p1 = Pattern.compile("(Register ?\\d? ?–? ?)\\(?(\\w+)\\)?");
-			Matcher m1 = p1.matcher(line);	
+			//这里的表达式分两种情况，有()  和 - 
+			//Pattern p1 = Pattern.compile("(Register ?\\d? ?–? ?)\\(?(\\w+)\\)?");
+			Matcher m1 = p1.matcher(line);
 			if(m1.find()) {//找寄存器的名字
-				System.out.println(m1.group(2));
-				
+				matchCount ++;
+				System.out.println(m1.group(1));
 				while(m.find()) {//获取全文的下一行
 					line = m.group().trim();		
 					if(line.matches(".+Offset.+") || line.matches(".+offset.+")) { //如果本行含有 offset 说明是寄存器域名所在行
@@ -61,17 +82,20 @@ public class Test {
 						while(m2.find()) { //以Type/Reset为标识，把寄存器域名所在行分成一个一个的小单位，便于处理
 							String ts = m2.group();
 							ts = ts.replaceAll("Type/Reset", "");
-							Pattern p3 = Pattern.compile(" *{1,9}(\\w+)");
+							Pattern p3 = Pattern.compile("( *{1,9})(\\w+)");
 							Matcher m3 = p3.matcher(ts);
 							while(m3.find()) { //这里获得了域名,但是域名的长度无法获取。
-								if(m3.group(1).length() > 2 &&  !m3.group(1).startsWith("0"))
-									System.out.println(" " + m3.group(1));
+								if(m3.group(2).length() > 2 &&  !m3.group(2).startsWith("0"))
+									if(m3.group(2).length() < "Reserve".length())
+										System.out.println(" " + m3.group(2) + "\t\t:\t" + m3.group(1).length());
+									else
+										System.out.println(" " + m3.group(2) + "\t:\t" + m3.group(1).length());
 							}
 						}
 						break;
 					}	
 				}
-			}				
-		}				
+			}
+		}
 	}
 }
