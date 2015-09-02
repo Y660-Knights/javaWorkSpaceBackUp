@@ -32,7 +32,7 @@ public class RegularExpression {
 		
 		//范围
 		
-		p("a".matches("[asdf]"));
+/*		p("a".matches("[asdf]"));
 		p("a".matches("[a-z]"));
 		
 		//|| 's three form
@@ -41,7 +41,7 @@ public class RegularExpression {
 		p("A".matches("[a-z[A-Z]]"));
 		
 		//&&
-		p("a".matches("[a-z&&[abt]]"));
+		p("a".matches("[a-z&&[abt]]"));*/
 		
 		
 		//认识 d s w D S W
@@ -64,11 +64,11 @@ public class RegularExpression {
 		p("hellosir".matches("^h[a-z]{3}o\\b.*"));
 		*/
 		//white lines
-/*
+
 		p(" \n".matches("^[\\s&&[^\\n]]*\\n$"));
 		//开头的是一个空白符但不是换行符，出现零或者多次。结尾的是换行符。
 		//p(" \n".matches("^[\\s&&[^\\n]]*\\n$"));
-*/	
+	
 		
 		//匹配E-mail 地址的正则表达式练习
 	/*	
