@@ -8,18 +8,19 @@ public class ChipRegister {
 	public ChipRegister (String name,String module) {
 		this.name = name;
 		this.module = module;
+		this.module = "";
 	}
 	
 	public String getTypedefText() {
 		String text = "";
-		text += "typedef struct {\r\n";
+		text += "typedef struct {";
 		text += this.domains.toString();
-		text += "\r\n} __" + this.module + "_" + this.name.toLowerCase() + "_bits\r\n";
+		text += "\r\n} __" + this.module + "_" + this.name.toLowerCase() + "_bits\r\n\r\n";
 		return 	text;			
 	}
 	
 	public boolean addDomain(String domain) {
-		this.domains.insert(0, "__REG32\t" + domain + "\r\n");
+		this.domains.insert(0, "\r\n\t__REG32\t" + domain);
 		return true;
 	}
 	

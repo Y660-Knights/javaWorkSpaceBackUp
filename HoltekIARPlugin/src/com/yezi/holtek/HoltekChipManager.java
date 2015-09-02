@@ -40,7 +40,7 @@ public class HoltekChipManager {
 				Chip c = new Chip(chipNames.get(i),p.getProperty("RAMSize"),p.getProperty("BlockSize"));
 				c.outputIARPluginFile(chipPropertyFilePath.get(i));				
 				fis.close();
-				pro.delete();
+				//pro.delete();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

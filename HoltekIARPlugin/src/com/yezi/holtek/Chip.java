@@ -30,65 +30,6 @@ public class Chip {
 		this.BlockSize = BlockSize;
 	}
 
-	private boolean createDevicesProperties(File file) {
-		//create directory
-		File dir = new File(file.getPath() + "\\devices");
-		if(!dir.exists())
-			dir.mkdirs();
-		dir = new File(file.getPath() + "\\devices\\Holtek");
-		if(!dir.exists())
-			dir.mkdirs();
-		//.menu devices
-		Element devicesRoot = new Element("optionMenuItem");
-		Document devicesDoc = new Document(devicesRoot);
-		devicesRoot.addContent(new Element("tag").setText(chipName));
-		devicesRoot.addContent(new Element("display").setText("Holtek " + this.chipName));
-		devicesRoot.addContent(new Element("data").setText("$CUR_DIR$\\"+this.chipName +".i79"));		
-		// 输出 books.xml 文件；    
-        // 使xml文件 缩进效果  
-        Format devicesFormat = Format.getPrettyFormat();  
-        XMLOutputter devicesXMLOut = new XMLOutputter(devicesFormat);  
-        try {
-        	//System.out.println(file.getPath());
-			devicesXMLOut.output(devicesDoc, new FileOutputStream(file.getPath() + "\\devices\\Holtek\\" + this.chipName + ".menu"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        //.i79
-        String i79FileName = file.getPath() + "\\devices\\Holtek\\" + this.chipName + ".i79";
-        try {
-        	File fIni = new File(i79FileName);        	
-        	OutputStream os = new FileOutputStream(fIni);
-        	os.close();
-			Wini ini = new Wini(fIni);
-			ini.put("FILEFORMAT", "rev",1.6);
-			
-			ini.put("CHIP", "name",this.chipName);
-			ini.put("CHIP", "endiansupport","le");
-			ini.put("CHIP", "thumbsupport","true");
-			ini.put("CHIP", "armsupport","false");
-			ini.put("CHIP", "fpu","None");
-			
-			ini.put("CORE", "name","Cortex-M3");
-			
-			ini.put("DDF FILE", "name","Holtek\\"+this.chipName+".ddf");
-			
-			ini.put("LINKER FILE", "name","$TOOLKIT_DIR$\\config\\linker\\Holtek\\"+this.chipName.toLowerCase()+".icf");
-			
-			ini.put("FLASH LOADER", "little","$TOOLKIT_DIR$\\config\\flashloader\\Holtek\\Flash"+this.chipName+".board");
-			
-			ini.store();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return true;
-	}
-	
-	
-	
 	public void outputIARPluginFile(File file) {		
 
 		createDevicesProperties(file);
@@ -113,16 +54,15 @@ public class Chip {
         
         for(File f : file.listFiles()) {
         	if(!f.isDirectory()) {
-        		String prefix=f.getName().substring(f.getName().lastIndexOf(".")+1);
-        		if(prefix.equals("doc") || prefix.equals("Doc")) {
+        		Pattern p = Pattern.compile(" ?_?(\\w+).doc");
+        		Matcher m = p.matcher(f.getName());
+        		while(m.find()) {
         			modulePath = f.getPath();
-        			prefix=modulePath.substring(modulePath.lastIndexOf("_")+1);
-        			moduleName = prefix.toLowerCase();
+        			moduleName = m.group(1).toLowerCase();
         			loadChipRegisters(chipHF,moduleName,modulePath);
         		}
         	}
         }
-        
         chipHF.createFile("io" + this.chipName);
 	}
 	
@@ -152,11 +92,12 @@ public class Chip {
 		sb.reverse();
 		sb2.reverse();
 		int index = sb.indexOf(sb2.toString());
-		if(index != 0) {
+		if(index != -1) {
 			sb2 = new StringBuffer(sb.substring(0,index));
 			sb2.reverse();
 			str = sb2.toString();
-		}
+		}else
+			return ;
 			
 		//获取doc中的一行
 		Pattern p = Pattern.compile("\\r\\n.+");
@@ -205,12 +146,17 @@ public class Chip {
 							Matcher m3 = p3.matcher(ts);
 							while(m3.find()) { //这里获得了域名,但是域名的长度无法获取。
 								if(m3.group(2).length() > 2 &&  !m3.group(2).startsWith("0"))
-									if(m3.group(2).length() < "Reserve".length())
+									//if(m3.group(2).length() < "Reserve".length())
 										//System.out.println(" " + m3.group(2) + "\t\t:\t" + m3.group(1).length());
-										cr.addDomain(m3.group(2) + "\t\t:\t" + m3.group(1).length());
-									else
-										//System.out.println(" " + m3.group(2) + "\t:\t" + m3.group(1).length());
-										cr.addDomain(m3.group(2) + "\t:\t" + m3.group(1).length());
+										if(m3.group(2).equals("Reserved"))
+											cr.addDomain("\t\t" + "\t\t:\t" + m3.group(1).length());
+										else
+											cr.addDomain(m3.group(2) + "\t\t:\t" + m3.group(1).length());
+	/*								else
+										if(m3.group(2).equals("Reserved"))
+											cr.addDomain("\t\t" + "\t:\t" + m3.group(1).length());
+										else
+											cr.addDomain(m3.group(2) + "\t:\t" + m3.group(1).length());*/
 							}
 						}
 						break;
@@ -297,5 +243,62 @@ public class Chip {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private boolean createDevicesProperties(File file) {
+		//create directory
+		File dir = new File(file.getPath() + "\\devices");
+		if(!dir.exists())
+			dir.mkdirs();
+		dir = new File(file.getPath() + "\\devices\\Holtek");
+		if(!dir.exists())
+			dir.mkdirs();
+		//.menu devices
+		Element devicesRoot = new Element("optionMenuItem");
+		Document devicesDoc = new Document(devicesRoot);
+		devicesRoot.addContent(new Element("tag").setText(chipName));
+		devicesRoot.addContent(new Element("display").setText("Holtek " + this.chipName));
+		devicesRoot.addContent(new Element("data").setText("$CUR_DIR$\\"+this.chipName +".i79"));		
+		// 输出 books.xml 文件；    
+        // 使xml文件 缩进效果  
+        Format devicesFormat = Format.getPrettyFormat();  
+        XMLOutputter devicesXMLOut = new XMLOutputter(devicesFormat);  
+        try {
+        	//System.out.println(file.getPath());
+			devicesXMLOut.output(devicesDoc, new FileOutputStream(file.getPath() + "\\devices\\Holtek\\" + this.chipName + ".menu"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        //.i79
+        String i79FileName = file.getPath() + "\\devices\\Holtek\\" + this.chipName + ".i79";
+        try {
+        	File fIni = new File(i79FileName);        	
+        	OutputStream os = new FileOutputStream(fIni);
+        	os.close();
+			Wini ini = new Wini(fIni);
+			ini.put("FILEFORMAT", "rev",1.6);
+			
+			ini.put("CHIP", "name",this.chipName);
+			ini.put("CHIP", "endiansupport","le");
+			ini.put("CHIP", "thumbsupport","true");
+			ini.put("CHIP", "armsupport","false");
+			ini.put("CHIP", "fpu","None");
+			
+			ini.put("CORE", "name","Cortex-M3");
+			
+			ini.put("DDF FILE", "name","Holtek\\"+this.chipName+".ddf");
+			
+			ini.put("LINKER FILE", "name","$TOOLKIT_DIR$\\config\\linker\\Holtek\\"+this.chipName.toLowerCase()+".icf");
+			
+			ini.put("FLASH LOADER", "little","$TOOLKIT_DIR$\\config\\flashloader\\Holtek\\Flash"+this.chipName+".board");
+			
+			ini.store();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
 	}
 }
