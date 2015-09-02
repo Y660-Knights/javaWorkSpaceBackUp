@@ -51,18 +51,19 @@ public class Test {
 			Matcher m1 = p1.matcher(line);	
 			if(m1.find()) {//找寄存器的名字
 				System.out.println(m1.group(2));
-				while(m.find()) {//找寄存器里面每个域的名字和长度
+				
+				while(m.find()) {//获取全文的下一行
 					line = m.group().trim();		
-					if(line.matches(".+Offset.+") || line.matches(".+offset.+")) {
+					if(line.matches(".+Offset.+") || line.matches(".+offset.+")) { //如果本行含有 offset 说明是寄存器域名所在行
 						//LPMODReserved Type/Reset 
 						Pattern p2 = Pattern.compile("[\\w+ **]+Type/Reset");
 						Matcher m2 = p2.matcher(line);	
-						while(m2.find()) {
+						while(m2.find()) { //以Type/Reset为标识，把寄存器域名所在行分成一个一个的小单位，便于处理
 							String ts = m2.group();
 							ts = ts.replaceAll("Type/Reset", "");
 							Pattern p3 = Pattern.compile(" *{3,9}(\\w+)");
 							Matcher m3 = p3.matcher(ts);
-							while(m3.find()) {
+							while(m3.find()) { //这里获得了域名,但是域名的长度无法获取。
 								if(m3.group(1).length() > 2)
 									System.out.println(" " + m3.group(1));
 							}
