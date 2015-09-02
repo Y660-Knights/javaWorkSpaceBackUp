@@ -61,10 +61,10 @@ public class Test {
 						while(m2.find()) { //以Type/Reset为标识，把寄存器域名所在行分成一个一个的小单位，便于处理
 							String ts = m2.group();
 							ts = ts.replaceAll("Type/Reset", "");
-							Pattern p3 = Pattern.compile(" *{3,9}(\\w+)");
+							Pattern p3 = Pattern.compile(" *{1,9}(\\w+)");
 							Matcher m3 = p3.matcher(ts);
 							while(m3.find()) { //这里获得了域名,但是域名的长度无法获取。
-								if(m3.group(1).length() > 2)
+								if(m3.group(1).length() > 2 &&  !m3.group(1).startsWith("0"))
 									System.out.println(" " + m3.group(1));
 							}
 						}
