@@ -13,8 +13,8 @@ public class Test {
 		// TODO Auto-generated method stub
 		FileInputStream in = null;
 		try {
-			in = new FileInputStream ("E:\\share\\IAR添加M0芯片型号\\Register Display naming\\User manual\\HT32F52230_CKCU.doc");
-			//in = new FileInputStream ("E:\\share\\IAR添加M0芯片型号\\Register Display naming\\User manual\\HT32F52230_AFIO.doc");
+			//in = new FileInputStream ("E:\\share\\IAR添加M0芯片型号\\Register Display naming\\User manual\\HT32F52230_CKCU.doc");
+			in = new FileInputStream ("E:\\share\\IAR添加M0芯片型号\\Register Display naming\\User manual\\HT32F52230_AFIO.doc");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -23,6 +23,7 @@ public class Test {
 		String str = null;
 		try {			
 			str = extractor.extractText(in);
+			in.close();
 			//System.out.println(str);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -56,7 +57,7 @@ public class Test {
 		
 		if(matchCount > 2) { //最少有两个寄存器,说明该表达式正确
 			p1 = Pattern.compile("Register ?\\d? ?\\((\\w+)\\)");
-			System.out.println("Reg count = " + matchCount); 
+			//System.out.println("Reg count = " + matchCount); 
 		}else { //更换表达式
 			p1 = Pattern.compile("Register ?\\d? ?– ?\\(?(\\w+)\\)?");
 		}
@@ -70,8 +71,7 @@ public class Test {
 			//这里的表达式分两种情况，有()  和 - 
 			//Pattern p1 = Pattern.compile("(Register ?\\d? ?–? ?)\\(?(\\w+)\\)?");
 			Matcher m1 = p1.matcher(line);
-			if(m1.find()) {//找寄存器的名字
-				matchCount ++;
+			if(m1.find()) {//找寄存器的名字				
 				System.out.println(m1.group(1));
 				while(m.find()) {//获取全文的下一行
 					line = m.group().trim();		
