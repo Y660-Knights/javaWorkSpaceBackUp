@@ -54,15 +54,22 @@ public class Chip {
         
         for(File f : file.listFiles()) {
         	if(!f.isDirectory()) {
-        		Pattern p = Pattern.compile(" ?_?(\\w+).doc");
+        		Pattern p = Pattern.compile("_([\\w&&[^_]]+).doc");
         		Matcher m = p.matcher(f.getName());
-        		while(m.find()) {
-        			modulePath = f.getPath();
-        			moduleName = m.group(1).toLowerCase();
-        			loadChipRegisters(chipHF,moduleName,modulePath);
+        		m.find();
+        		if(!m.find(0)) {
+        			continue;
         		}
+        		
+        		modulePath = f.getPath();
+    			moduleName = m.group(1);
+    			if(moduleName.length() > 10)
+    				System.out.println(moduleName);
+    			loadChipRegisters(chipHF,moduleName,modulePath);
         	}
         }
+        chipHF.addInclude("io_macros");
+        chipHF.addIfdef("#ifdef __IAR_SYSTEMS_ICC__\r\n#ifndef _SYSTEM_BUILD\r\n\t#pragma system_include\r\n#endif");
         chipHF.createFile("io" + this.chipName);
 	}
 	
@@ -132,7 +139,28 @@ public class Chip {
 			Matcher m1 = p1.matcher(line);
 			if(m1.find()) {//找寄存器的名字				
 				//System.out.println(m1.group(1));
-				ChipRegister cr = new ChipRegister(m1.group(1), moduleName);
+				String regName = "";
+				StringBuffer sb3 = new StringBuffer(m1.group(1));
+				
+				//判断寄存器名字里面有没有包含模块名字,如果包含则删除
+				int moduleIndex = sb3.indexOf(moduleName);
+				if(moduleIndex != -1)
+					sb3.delete(moduleIndex, moduleName.length() - 1);
+				
+				regName = sb3.toString().toUpperCase();
+				ChipRegister cr = new ChipRegister(regName, moduleName);
+				String address = "0x40000000";
+				//__IO_REG32_BIT(ICTR,                    0xE000E004, __READ_WRITE , __ictr_bits);
+				if((regName + moduleName).length() > 15)
+					address = "\t0x40000000";
+				else if((regName + moduleName).length() > 10)
+					address = "\t\t0x40000000";
+				else if((regName + moduleName).length() > 6)
+					address = "\t\t\t0x40000000";
+				else
+					address = "\t\t\t\t0x40000000";
+				
+				chipHF.addCall("__IO_REG32_BIT",moduleName + "_" +regName + "," + address + ", __READ_WRITE," + " __"+ moduleName.toLowerCase() + "_" + regName.toLowerCase()+"_bits");
 				while(m.find()) {//获取全文的下一行
 					line = m.group().trim();		
 					if(line.matches(".+Offset.+") || line.matches(".+offset.+")) { //如果本行含有 offset 说明是寄存器域名所在行

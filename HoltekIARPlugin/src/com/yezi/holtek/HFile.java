@@ -9,6 +9,8 @@ public class HFile {
 	private String path;
 	private List<ChipRegister> ChipRegister;
 	private String include = "";
+	private String ifdef = "";
+	private String call = "";
 	
 	public HFile (String path) {
 		if(this.ChipRegister == null) {
@@ -24,9 +26,13 @@ public class HFile {
 	public String getContent() {
 		String content = "";
 		content += this.include;
+		content += this.ifdef;
 		for(ChipRegister f : this.ChipRegister) {
 			content += f.getTypedefText();
 		}
+		content += "#endif\r\n\r\n";
+		content += call;
+		
 		return content;
 	}
 
@@ -39,6 +45,16 @@ public class HFile {
 	
 	public void addInclude(String include) {
 		this.include += "#include\t\"" + include + "\"\r\n\r\n";
+	}
+
+	public void addIfdef(String def) {
+		// TODO Auto-generated method stub
+		this.ifdef += "\r\n" + def + "\r\n\r\n";
+	}
+
+	public void addCall(String string, String string2) {
+		// TODO Auto-generated method stub
+		this.call += string + "("+string2+");\r\n";
 	}
 
 }

@@ -19,6 +19,8 @@ public class HoltekChipManager {
 	private HoltekChipManager(String path) {
 		fa = new FileAssistor(path);
 		for(File f : fa.getPathDirectory()) {
+			if(f.getName().equals(".svn"))
+				continue;
 			chipNames.add(f.getName());
 			chipPropertyFilePath.add(f);
 			//System.out.println(f.getName());

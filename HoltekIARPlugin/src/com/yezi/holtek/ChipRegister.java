@@ -8,14 +8,21 @@ public class ChipRegister {
 	public ChipRegister (String name,String module) {
 		this.name = name;
 		this.module = module;
-		this.module = "";
+		//this.module = "";
 	}
 	
 	public String getTypedefText() {
-		String text = "";
+		String text = "";		
 		text += "typedef struct {";
 		text += this.domains.toString();
-		text += "\r\n} __" + this.module + "_" + this.name.toLowerCase() + "_bits\r\n\r\n";
+		/*StringBuffer sb = new StringBuffer(this.name);
+		sb.insert(this.module.length(), '_');*/
+		//this.module = "";
+		if(this.module.length() == 0 || this.name.length() == 0)
+			text += "\r\n} __" + this.module.toLowerCase() + this.name.toLowerCase() + "_bits\r\n\r\n";
+		else
+			text += "\r\n} __" + this.module.toLowerCase() + "_" + this.name.toLowerCase() + "_bits\r\n\r\n";
+		
 		return 	text;			
 	}
 	
