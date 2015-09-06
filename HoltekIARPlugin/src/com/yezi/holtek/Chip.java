@@ -63,8 +63,8 @@ public class Chip {
         		
         		modulePath = f.getPath();
     			moduleName = m.group(1);
-    			if(moduleName.length() > 10)
-    				System.out.println(moduleName);
+    			//if(moduleName.length() > 10)
+    			//System.out.println(moduleName);
     			loadChipRegisters(chipHF,moduleName,modulePath);
         	}
         }
