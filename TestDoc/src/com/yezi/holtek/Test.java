@@ -14,7 +14,7 @@ public class Test {
 		FileInputStream in = null;
 		try {
 			//in = new FileInputStream ("E:\\share\\IAR添加M0芯片型号\\Register Display naming\\User manual\\HT32F52230_CKCU.doc");
-			in = new FileInputStream ("E:\\share\\IAR添加M0芯片型号\\Register Display naming\\User manual\\HT32F52230_AFIO.doc");
+			in = new FileInputStream ("E:\\share\\IAR添加M0芯片型号\\Holteck\\HT32F52231\\HT32F52241_52341_GPIO.doc");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

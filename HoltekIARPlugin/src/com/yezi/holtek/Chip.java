@@ -146,17 +146,22 @@ public class Chip {
 							Matcher m3 = p3.matcher(ts);
 							while(m3.find()) { //这里获得了域名,但是域名的长度无法获取。
 								if(m3.group(2).length() > 2 &&  !m3.group(2).startsWith("0"))
-									//if(m3.group(2).length() < "Reserve".length())
-										//System.out.println(" " + m3.group(2) + "\t\t:\t" + m3.group(1).length());
-										if(m3.group(2).equals("Reserved"))
-											cr.addDomain("\t\t" + "\t\t:\t" + m3.group(1).length());
+									if(m3.group(2).equals("Reserved"))
+										if(m3.group(2).length() <= 7)
+											if(m3.group(2).length() <= 3)
+												cr.addDomain("\t\t" + "\t\t\t:\t" + m3.group(1).length());
+											else
+												cr.addDomain("\t\t" + "\t\t:\t" + m3.group(1).length());
 										else
-											cr.addDomain(m3.group(2) + "\t\t:\t" + m3.group(1).length());
-	/*								else
-										if(m3.group(2).equals("Reserved"))
 											cr.addDomain("\t\t" + "\t:\t" + m3.group(1).length());
+									else
+										if(m3.group(2).length() <= 7)
+											if(m3.group(2).length() <= 3)
+												cr.addDomain(m3.group(2) + "\t\t\t:\t" + m3.group(1).length());
+											else
+												cr.addDomain(m3.group(2) + "\t\t:\t" + m3.group(1).length());
 										else
-											cr.addDomain(m3.group(2) + "\t:\t" + m3.group(1).length());*/
+											cr.addDomain(m3.group(2) + "\t:\t" + m3.group(1).length());
 							}
 						}
 						break;
