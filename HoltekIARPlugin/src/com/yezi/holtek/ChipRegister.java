@@ -62,4 +62,9 @@ public class ChipRegister {
 		// TODO Auto-generated method stub
 		return this.domains;
 	}
+
+	public int getOffset() {
+		// TODO Auto-generated method stub
+		return this.offset;
+	}
 }

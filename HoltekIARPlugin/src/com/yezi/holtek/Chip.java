@@ -173,6 +173,8 @@ public class Chip {
 					sb3.delete(moduleIndex, cm.getName().length());
 
 				regName = sb3.toString().toUpperCase();
+				
+
 				// 找offset offset:0x008
 				while (m.find()) {
 					line = m.group().trim();
@@ -183,7 +185,7 @@ public class Chip {
 						break;
 					}
 				}
-
+				
 				ChipRegister cr = new ChipRegister(regName, offset);
 				cm.addChipRegister(cr);
 				boolean isSpecailRegFind = false;
@@ -217,8 +219,7 @@ public class Chip {
 						 */
 					}
 
-					// 如果是特殊的写法 ADC Conversion Data Register y – ADCDRy, y = 0 ~
-					// 7
+					// 如果是特殊的写法 ADC Conversion Data Register y – ADCDRy, y = 0 ~ 7
 					Pattern pt = Pattern.compile("Register ?y ?– ?(\\w+)y, y = (\\d) ~ (\\d)");
 					m1 = pt.matcher(line);
 					if (m1.find()) {
@@ -280,10 +281,51 @@ public class Chip {
 							cm.addChipRegister(crt);
 						}
 					}
+					// 如果是特殊的写法 ADC Conversion Data Register y – ADCDRy, y = 0 ~ 7
 					
 					if(isSpecailRegFind)
 						break;
-				}				
+				}
+				
+				//处理AB 寄存器情况
+				if(regName.equals("GPxCFGLR".toUpperCase())) {
+					ChipRegister crt,crt2 = null;
+					crt = cm.getChipRegisters().get(cm.getChipRegisterSize() -1);
+					cm.getChipRegisters().remove(crt);
+					String name = "GPACFGLR";
+					crt2 = new ChipRegister(name, crt.getOffset());
+					for(RegDomain rdt : crt.getRegDomains()) {
+						crt2.addDomain(rdt);
+					}
+					cm.addChipRegister(crt2);					
+					name = "GPBCFGLR";
+					crt2 = new ChipRegister(name, crt.getOffset() + 4);
+					for(RegDomain rdt : crt.getRegDomains()) {
+						crt2.addDomain(rdt);
+					}
+					cm.addChipRegister(crt2);
+				}
+				//处理AB 寄存器情况
+				if(regName.equals("GPXCFGHR".toUpperCase())) {
+					ChipRegister crt,crt2 = null;
+					crt = cm.getChipRegisters().get(cm.getChipRegisterSize() -1);
+					cm.getChipRegisters().remove(crt);
+					String name = "GPACFGHR";
+					crt2 = new ChipRegister(name, crt.getOffset());
+					for(RegDomain rdt : crt.getRegDomains()) {
+						crt2.addDomain(rdt);
+					}
+					cm.addChipRegister(crt2);					
+					name = "GPBCFGHR";
+					crt2 = new ChipRegister(name, crt.getOffset() + 4);
+					for(RegDomain rdt : crt.getRegDomains()) {
+						crt2.addDomain(rdt);
+					}
+					cm.addChipRegister(crt2);
+				}
+				
+				
+				
 			}
 
 		}
