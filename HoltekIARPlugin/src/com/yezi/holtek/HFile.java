@@ -7,27 +7,27 @@ public class HFile {
 
 	private FileAssistor fa;
 	private String path;
-	private List<ChipRegister> ChipRegister;
+	private List<ChipRegister> chipRegister;
 	private String include = "";
 	private String ifdef = "";
 	private String call = "";
 	
 	public HFile (String path) {
-		if(this.ChipRegister == null) {
-			this.ChipRegister = new ArrayList<ChipRegister>();
+		if(this.chipRegister == null) {
+			this.chipRegister = new ArrayList<ChipRegister>();
 		}
 		this.path = path;		
 	}
 	
 	public boolean addChipRegister(ChipRegister f) {
-		return this.ChipRegister.add(f);
+		return this.chipRegister.add(f);
 	}
 	
 	public String getContent() {
 		String content = "";
 		content += this.include;
 		content += this.ifdef;
-		for(ChipRegister f : this.ChipRegister) {
+		for(ChipRegister f : this.chipRegister) {
 			content += f.getTypedefText();
 		}
 		content += "#endif\r\n\r\n";
