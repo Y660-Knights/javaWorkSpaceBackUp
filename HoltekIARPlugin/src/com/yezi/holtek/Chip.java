@@ -132,7 +132,7 @@ public class Chip {
 		int matchCount = 0;
 		Pattern p1 = Pattern.compile("Register ?\\d? ?\\((\\w+)\\)");
 		Matcher m1 = null;
-
+		
 		while (m.find()) {
 			String line = m.group().trim();
 			m1 = p1.matcher(line);
@@ -151,7 +151,7 @@ public class Chip {
 		} else { // 更换表达式
 			p1 = Pattern.compile("Register ?\\d? ?– ?\\(?(\\w+)\\)?");
 		}
-
+		
 		m = p.matcher(str);
 		while (m.find()) {
 			// 去掉换行符等特殊符号
@@ -159,8 +159,75 @@ public class Chip {
 			line = m.group().trim();
 			if (line.length() < 6)
 				continue;
-			m1 = p1.matcher(line);
+						
+			{	//因为这个寄存器是在最开始，所以不用管
+				// 1.5.1	EXTI Interrupt Configuration Register n – EXTICFGRn, n = 0 ~ 15
+				Pattern pt = Pattern.compile("Register ?n ?– ?(\\w+)n, n = (\\d) ~ (\\d{0,3})");
+				m1 = pt.matcher(line);
+				
+				if (m1.find()) {
+					String namet = m1.group(1);
+					int s, e, startOffset = 0;
+					s = Integer.parseInt(m1.group(2));
+					e = Integer.parseInt(m1.group(3));
+					List<RegDomain> rds = new ArrayList<>();
 
+					// 找offset
+					while (m.find()) {
+						line = m.group().trim();
+						Pattern p3 = Pattern.compile("[o||O]ffset ?:? ?(\\w{5}) ?\\(?\\d?\\)? ?~ ?(\\w{5})");
+						Matcher m3 = p3.matcher(line);
+						if (m3.find()) {
+							startOffset = Integer.parseInt(m3.group(1).substring(2, m3.group(1).length()), 16);
+							break;
+						}
+					}
+					// 找域名和域名长度
+					while (m.find()) {						
+						line = m.group().trim();
+						if(line.length() < 6)
+							continue;
+						Pattern p2 = Pattern.compile("\\[(\\d{1,2}):?(\\d{0,2})\\](\\w+)");
+						Matcher m2 = p2.matcher(line);
+
+						// 如果找到寄存器名，表示上面一个寄存器所有域名已经找到.
+						m1 = p1.matcher(line);
+						if (m1.find())
+							break;
+
+						while (m2.find()) { //
+							String domain;
+							int start, end;
+							domain = m2.group(3);
+							if (m2.group(2).length() == 0) {
+								start = Integer.parseInt(m2.group(1));
+								end = start;
+							} else {
+								start = Integer.parseInt(m2.group(1));
+								end = Integer.parseInt(m2.group(2));
+							}
+							RegDomain rd = new RegDomain(start, end, domain);
+							rds.add(rd);
+						}
+					}
+
+					for (int i = s; i < (e - s + 1); i++) {
+						ChipRegister crt = new ChipRegister(namet + i, startOffset + i * 4);
+						for (RegDomain rd : rds) {
+							String n = rd.getName();
+							StringBuffer sbn = new StringBuffer(n);
+							int t = n.indexOf('n');
+							sbn.replace(t, t+1, "" + i);
+							n = sbn.toString();
+							RegDomain rdt = new RegDomain(rd.getBitRangeStart(), rd.getBitRangeEnd(), n + i);
+							crt.addDomain(rdt);
+						}
+						cm.addChipRegister(crt);
+					}
+				}
+				// 1.5.1	EXTI Interrupt Configuration Register n – EXTICFGRn, n = 0 ~ 15
+			}
+			m1 = p1.matcher(line);
 			while (m1.find(0)) {// 找寄存器的名字
 				// System.out.println(m1.group(1));
 				String regName = "";
@@ -171,10 +238,7 @@ public class Chip {
 				int moduleIndex = sb3.indexOf(cm.getName());
 				if (moduleIndex != -1)
 					sb3.delete(moduleIndex, cm.getName().length());
-
 				regName = sb3.toString().toUpperCase();
-				
-
 				// 找offset offset:0x008
 				while (m.find()) {
 					line = m.group().trim();
