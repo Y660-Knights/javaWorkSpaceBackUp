@@ -3,10 +3,20 @@ package com.yezi.holtek;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.ini4j.Wini;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 public class HoltekChipManager {
 
@@ -47,20 +57,25 @@ public class HoltekChipManager {
 	}
 	
 	public boolean outputIARPluginFile() {
-/*		for(int i = 0; i < chipNames.size(); i ++) {
-			try {
-				File pro = new File(chipPropertyFilePath.get(i) + "\\chip.properties");
-				FileInputStream fis = new FileInputStream(pro);
-				p.load(fis);
-				Chip c = new Chip(chipNames.get(i),p.getProperty("RAMSize"),p.getProperty("BlockSize"));
-				c.outputIARPluginFile(chipPropertyFilePath.get(i));				
-				fis.close();
-				//pro.delete();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}			
-		}*/
+/*		createDevicesProperties(file);
+		createFlashloaderProperties(file);
+		createIncProperties(file);*/
 		return false;
+	}
+	
+	private void createIncProperties(File file) {
+		// TODO Auto-generated method stub
+
+	}
+	
+	private void createFlashloaderProperties(File file) {
+
+
+	}
+
+	private boolean createDevicesProperties(File file) {
+
+
+		return true;
 	}
 }

@@ -22,6 +22,11 @@ public class RegDomain {
 	public String getName() {
 		return name;
 	}
+
+	public int getBitRangeCount() {
+		// TODO Auto-generated method stub
+		return (this.bitRangeEnd - this.bitRangeStart + 1);
+	}
 	
 }
 

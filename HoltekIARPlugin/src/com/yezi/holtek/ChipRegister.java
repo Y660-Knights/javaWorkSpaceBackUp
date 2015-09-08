@@ -17,32 +17,6 @@ public class ChipRegister {
 		this.offset = offset;
 	}
 	
-	public String getTypedefText() {
-		String text = "";		
-/*		text += "typedef struct {\r\n";
-		
-		for(RegDomain ed : domains) {
-			text += ("\t__REG32\t" + ed.getName() + "\t:\t" + (ed.getBitRangeEnd() - ed.getBitRangeStart() +1) + "\r\n");
-		}
-		if(this.module.length() == 0 || this.name.length() == 0)
-			text += "\r\n} __" + this.module.toLowerCase() + this.name.toLowerCase() + "_bits\r\n\r\n";
-		else
-			text += "\r\n} __" + this.module.toLowerCase() + "_" + this.name.toLowerCase() + "_bits\r\n\r\n";*/
-		
-		return 	text;			
-	}
-	
-	public String getDDFText() {
-		String text = null;
-		
-		return text; 
-	}
-	
-	public boolean addDomain(String domain,int bitRangeStart,int bitRangeEnd) {
-		//this.domains.insert(0, "\r\n\t__REG32\t\t" + domain);
-		return this.domains.add(new RegDomain(bitRangeStart, bitRangeEnd, domain));
-	}
-	
 	public boolean addDomain(RegDomain rd) {
 		//this.domains.insert(0, "\r\n\t__REG32\t\t" + domain);
 		return this.domains.add(rd);
@@ -66,5 +40,17 @@ public class ChipRegister {
 	public int getOffset() {
 		// TODO Auto-generated method stub
 		return this.offset;
+	}
+
+	public String getZone() {
+		return zone;
+	}
+
+	public int getBytesize() {
+		return Bytesize;
+	}
+
+	public List<RegDomain> getDomains() {
+		return domains;
 	}
 }
