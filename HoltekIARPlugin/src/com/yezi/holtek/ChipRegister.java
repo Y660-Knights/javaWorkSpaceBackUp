@@ -5,11 +5,12 @@ import java.util.List;
 
 public class ChipRegister {
 	private String name = null;
+	
 	private String zone = null;
 	private int Bytesize = 0;
-	private int offset = 0;
 	private String Displaybase = null;
 	
+	private int offset = 0;
 	private List<RegDomain> domains = new ArrayList<RegDomain>();
 	
 	//private StringBuffer domains = new StringBuffer();
@@ -17,6 +18,9 @@ public class ChipRegister {
 	public ChipRegister (String name,int offset) {
 		this.name = name;
 		this.offset = offset;
+		this.zone = "Memory";
+		this.Bytesize = 4;
+		this.Displaybase = "base=16";
 	}
 	
 	public boolean addDomain(RegDomain rd) {

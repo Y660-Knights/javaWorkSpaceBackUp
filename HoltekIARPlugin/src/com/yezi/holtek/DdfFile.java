@@ -28,12 +28,13 @@ public class DdfFile implements HolteckPropertiesFile{
 		for(ChipModule cm : chip.getChipModules()) { //SFR
 			//这里缺一个模块注释
 			for(ChipRegister cr : cm.getChipRegisters()) {
-				content += "sfr = \"" + cr.getName() + "\"\t, \"" + cr.getZone() + "\", " 
-						+ Integer.toHexString((cm.getBaseAddress() +cr.getOffset())) + "," + cr.getBytesize() + "," + cr.getDisplaybase() + "\r\n";
+				content += "sfr = \"" + cr.getName() + "\"\t\t\t, \"" + cr.getZone() + "\", " 
+						+ "0x"+Integer.toHexString((cm.getBaseAddress() +cr.getOffset())).toUpperCase() + ", " + cr.getBytesize() + ", " 
+						+ cr.getDisplaybase() + "\r\n";
 				for(RegDomain rd : cr.getDomains()) {
-					content += "sfr = \"" + cr.getName() + "\"\t, \"" + cr.getZone() + "\", " 
-							+ Integer.toHexString((cm.getBaseAddress() +cr.getOffset())) + "," + cr.getBytesize() + "," + cr.getDisplaybase()
-							+ "bitRange=" +rd.getBitRangeStart() + rd.getBitRangeEnd() +"-"+ "\r\n";
+					content += "sfr = \"" + cr.getName()+"." + rd.getName() + "\"\t, \"" + cr.getZone() + "\", " 
+							+ "0x"+Integer.toHexString((cm.getBaseAddress() +cr.getOffset())).toUpperCase() + ", " + cr.getBytesize() + ", " 
+							+ cr.getDisplaybase() + ", bitRange=" +rd.getBitRangeStart() +"-" + rd.getBitRangeEnd() + "\r\n";
 				}
 			}			
 		}

@@ -83,12 +83,12 @@ public class HFile implements HolteckPropertiesFile{
 					count-= rd.getBitRangeCount();
 					i+= rd.getBitRangeCount();
 				}
-				if(count >= 0) {
+				if(count > 0) {
 					temp += "\t__REG32\t\t\t"+" : " +count+ ";\r\n";
 				}
 				temp += "} __"+cm.getName().toLowerCase()+ "_" + cr.getName().toLowerCase()+ "_bits;\r\n\r\n";
 				this.register += temp;
-				this.addCall("__IO_REG32_BIT", cm.getName() + ",\t\t"+Integer.toHexString((cm.getBaseAddress() + cr.getOffset()))+", __READ_WRITE , " 
+				this.addCall("__IO_REG32_BIT", cm.getName() +"_"+cr.getName() + ",\t\t0x"+Integer.toHexString((cm.getBaseAddress() + cr.getOffset())).toUpperCase()+", __READ_WRITE , " 
 								+ "__"+cm.getName().toLowerCase()+ "_" + cr.getName().toLowerCase()+ "_bits");
 				
 			}
