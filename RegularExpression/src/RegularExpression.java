@@ -65,7 +65,13 @@ public class RegularExpression {
 		*/
 		//white lines
 
-		p(" \n".matches("^[\\s&&[^\\n]]*\\n$"));
+		//p(" \n".matches("^[\\s&&[^\\n]]*\\n$"));
+				
+		Pattern p = Pattern.compile("Register ?\\d? ?- ?\\(?(\\w+)\\)?");
+		Matcher m = p.matcher("SPI Control Register 0 - SPICR0");
+		if(m.find())
+			System.out.println(1);;
+		
 		//开头的是一个空白符但不是换行符，出现零或者多次。结尾的是换行符。
 		//p(" \n".matches("^[\\s&&[^\\n]]*\\n$"));
 	

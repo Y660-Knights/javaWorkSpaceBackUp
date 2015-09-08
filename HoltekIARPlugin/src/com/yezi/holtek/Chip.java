@@ -129,9 +129,12 @@ public class Chip {
 		Pattern p = Pattern.compile("\\r\\n.+");
 		Matcher m = p.matcher(str);
 
-		int matchCount = 0;
+		int matchCount = 0,matchCount2 = 0;
 		Pattern p1 = Pattern.compile("Register ?\\d? ?\\((\\w+)\\)");
 		Matcher m1 = null;
+		
+		if(cm.getName().equals("SPI")) 
+			System.out.println();		
 		
 		while (m.find()) {
 			String line = m.group().trim();
@@ -140,16 +143,23 @@ public class Chip {
 				matchCount++;
 			}
 		}
-
-		/*
-		 * if(cm.getName().equals("I2C")) System.out.println();
-		 */
-
-		if (matchCount > 2) { // 最少有两个寄存器,说明该表达式正确
+		
+		m = p.matcher(str);
+		p1 = Pattern.compile("Register ?\\d? ?[–||-] ?\\(?(\\w+)\\)?");
+	  //p1 = Pattern.compile("Register ?\\d? ?[–||-] ?\\(?(\\w+)\\)?");
+		while (m.find()) {
+			String line = m.group().trim();
+			m1 = p1.matcher(line);
+			if (m1.find()) {
+				matchCount2++;
+			}
+		}
+		
+		if (matchCount > matchCount2) { // 最少有两个寄存器,说明该表达式正确
 			p1 = Pattern.compile("Register ?\\d? ?\\((\\w+)\\)");
 			// System.out.println("Reg count = " + matchCount);
 		} else { // 更换表达式
-			p1 = Pattern.compile("Register ?\\d? ?– ?\\(?(\\w+)\\)?");
+			p1 = Pattern.compile("Register ?\\d? ?[–||-] ?\\(?(\\w+)\\)?");
 		}
 		
 		m = p.matcher(str);
@@ -159,7 +169,10 @@ public class Chip {
 			line = m.group().trim();
 			if (line.length() < 6)
 				continue;
-						
+			
+/*			if(cm.getName().equals("GPTM")) 
+				System.out.println();		
+			*/
 			{	//因为这个寄存器是在最开始，所以不用管
 				// 1.5.1	EXTI Interrupt Configuration Register n – EXTICFGRn, n = 0 ~ 15
 				Pattern pt = Pattern.compile("Register ?n ?– ?(\\w+)n, n = (\\d) ~ (\\d{0,3})");
@@ -346,6 +359,67 @@ public class Chip {
 						}
 					}
 					// 如果是特殊的写法 ADC Conversion Data Register y – ADCDRy, y = 0 ~ 7
+					
+					
+					// 如果是特殊的写法 Custom ID Register n (CIDRn, n = 0 ~3)
+					pt = Pattern.compile("Register ?n ?\\((\\w+)n, n = (\\d) ~ ?(\\d)\\)");
+					m1 = pt.matcher(line);
+					if (m1.find()) {
+						isSpecailRegFind = true;
+						String namet = m1.group(1);
+						int s, e, startOffset = 0;
+						s = Integer.parseInt(m1.group(2));
+						e = Integer.parseInt(m1.group(3));
+						List<RegDomain> rds = new ArrayList<>();
+
+						// 找offset
+						while (m.find()) {
+							line = m.group().trim();
+							Pattern p3 = Pattern.compile("[o||O]ffset ?:? ?(\\w{5}) ?\\(?\\d?\\)? ?~ ?(\\w{5})");
+							Matcher m3 = p3.matcher(line);
+							if (m3.find()) {
+								startOffset = Integer.parseInt(m3.group(1).substring(2, m3.group(1).length()), 16);
+								break;
+							}
+						}
+						// 找域名和域名长度
+						while (m.find()) {
+							line = m.group().trim();
+							m2 = p2.matcher(line);
+
+							// 如果找到寄存器名，表示上面一个寄存器所有域名已经找到.
+							m1 = p1.matcher(line);
+							if (m1.find())
+								break;
+
+							while (m2.find()) { //
+								String domain;
+								int start, end;
+								domain = m2.group(3);
+								if (m2.group(2).length() == 0) {
+									start = Integer.parseInt(m2.group(1));
+									end = start;
+								} else {
+									start = Integer.parseInt(m2.group(1));
+									end = Integer.parseInt(m2.group(2));
+								}
+								RegDomain rd = new RegDomain(start, end, domain);
+								rds.add(rd);
+							}
+						}
+
+						for (int i = s; i < (e - s + 1); i++) {
+							ChipRegister crt = new ChipRegister(namet + i, startOffset + i * 4);
+							for (RegDomain rd : rds) {
+								String n = rd.getName();
+								n = n.substring(0, n.length() - 1);
+								RegDomain rdt = new RegDomain(rd.getBitRangeStart(), rd.getBitRangeEnd(), n + i);
+								crt.addDomain(rdt);
+							}
+							cm.addChipRegister(crt);
+						}
+					}
+					// 如果是特殊的写法 Custom ID Register n (CIDRn, n = 0 ~3)
 					
 					if(isSpecailRegFind)
 						break;
