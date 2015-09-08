@@ -461,11 +461,7 @@ public class Chip {
 					}
 					cm.addChipRegister(crt2);
 				}
-				
-				
-				
 			}
-
 		}
 	}
 
