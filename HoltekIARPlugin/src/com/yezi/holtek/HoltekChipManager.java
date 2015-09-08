@@ -57,25 +57,20 @@ public class HoltekChipManager {
 	}
 	
 	public boolean outputIARPluginFile() {
-/*		createDevicesProperties(file);
-		createFlashloaderProperties(file);
-		createIncProperties(file);*/
-		return false;
-	}
-	
-	private void createIncProperties(File file) {
-		// TODO Auto-generated method stub
-
-	}
-	
-	private void createFlashloaderProperties(File file) {
-
-
-	}
-
-	private boolean createDevicesProperties(File file) {
-
-
+		List<HolteckPropertiesFile> hpfs = new ArrayList<>();
+		hpfs.add(new I79File());
+		hpfs.add(new MenuFile());
+		hpfs.add(new BoardFile());
+		hpfs.add(new FlashFile());
+		hpfs.add(new OpflashFile());
+		hpfs.add(new HFile());
+		hpfs.add(new DdfFile());
+		for(Chip c : chips) {
+			for(HolteckPropertiesFile hpf : hpfs) {
+				hpf.create(c);
+			}
+		}
+				
 		return true;
 	}
 }

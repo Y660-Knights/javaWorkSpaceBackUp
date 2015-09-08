@@ -9,7 +9,7 @@ import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
-public class MunuFile implements HolteckPropertiesFile{
+public class MenuFile implements HolteckPropertiesFile{
 	
 	@Override
 	public boolean create(Chip chip) {

@@ -5,7 +5,6 @@ public class Holtek {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		HoltekChipManager.getInatance(path).outputIARPluginFile();
+		System.out.println("create properties file complete ? \r\n\t" + HoltekChipManager.getInatance(path).outputIARPluginFile());
 	}
-
 }
