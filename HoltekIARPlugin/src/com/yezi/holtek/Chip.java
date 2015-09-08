@@ -216,8 +216,8 @@ public class Chip {
 								start = Integer.parseInt(m2.group(1));
 								end = start;
 							} else {
-								start = Integer.parseInt(m2.group(1));
-								end = Integer.parseInt(m2.group(2));
+								start = Integer.parseInt(m2.group(2));
+								end = Integer.parseInt(m2.group(1));
 							}
 							RegDomain rd = new RegDomain(start, end, domain);
 							rds.add(rd);
@@ -285,8 +285,8 @@ public class Chip {
 							start = Integer.parseInt(m2.group(1));
 							end = start;
 						} else {
-							start = Integer.parseInt(m2.group(1));
-							end = Integer.parseInt(m2.group(2));
+							start = Integer.parseInt(m2.group(2));
+							end = Integer.parseInt(m2.group(1));
 						}
 						RegDomain rd = new RegDomain(start, end, domain);
 						cr.addDomain(rd);
@@ -339,8 +339,8 @@ public class Chip {
 									start = Integer.parseInt(m2.group(1));
 									end = start;
 								} else {
-									start = Integer.parseInt(m2.group(1));
-									end = Integer.parseInt(m2.group(2));
+									start = Integer.parseInt(m2.group(2));
+									end = Integer.parseInt(m2.group(1));
 								}
 								RegDomain rd = new RegDomain(start, end, domain);
 								rds.add(rd);
@@ -400,8 +400,8 @@ public class Chip {
 									start = Integer.parseInt(m2.group(1));
 									end = start;
 								} else {
-									start = Integer.parseInt(m2.group(1));
-									end = Integer.parseInt(m2.group(2));
+									start = Integer.parseInt(m2.group(2));
+									end = Integer.parseInt(m2.group(1));
 								}
 								RegDomain rd = new RegDomain(start, end, domain);
 								rds.add(rd);

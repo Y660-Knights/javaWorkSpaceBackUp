@@ -21,7 +21,8 @@ public class ChipRegister {
 	
 	public boolean addDomain(RegDomain rd) {
 		//this.domains.insert(0, "\r\n\t__REG32\t\t" + domain);
-		return this.domains.add(rd);
+		this.domains.add(0,rd);
+		return true;
 	}
 
 	public String getName() {
