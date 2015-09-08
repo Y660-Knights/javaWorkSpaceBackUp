@@ -21,6 +21,7 @@ public class HFile implements HolteckPropertiesFile{
 /*		for(ChipRegister f : this.chipRegister) {
 			content += f.getTypedefText();
 		}*/
+		content += register;
 		content += "#endif\r\n\r\n";
 		content += call;
 		
@@ -28,8 +29,8 @@ public class HFile implements HolteckPropertiesFile{
 	}
 
 	private void createFile(String name) {
-		if(this.fa == null)
-			this.fa = new FileAssistor(path + "\\" + name + ".h");
+		//if(this.fa == null)
+		this.fa = new FileAssistor(path + "\\" + name + ".h");
 		
 		fa.outputFile("#ifndef\t__" + name.toUpperCase() + "_H\r\n"+ "#define\t__" + name.toUpperCase() + "_H\r\n\r\n" +this.getContent() + "\r\n#endif //__"+name.toUpperCase()+"_H"+"\r\n");
 	}
@@ -60,7 +61,7 @@ public class HFile implements HolteckPropertiesFile{
 		if (!dir.exists())
 			dir.mkdirs();
 		
-		this.path = chip.getPath();
+		this.path = chip.getPath() + "\\inc\\Holtek";
 		
 		this.addInclude("io_macros");
 		this.addIfdef("#ifdef __IAR_SYSTEMS_ICC__\r\n#ifndef _SYSTEM_BUILD\r\n\t#pragma system_include\r\n#endif");
@@ -73,9 +74,9 @@ public class HFile implements HolteckPropertiesFile{
 				for(RegDomain rd : cr.getDomains()) {
 					temp += "\t__REG32\t"+rd.getName()+" : " +rd.getBitRangeCount()+ ";\r\n";
 				}
-				temp += "} __"+cm.getName()+ "_" + cr.getName()+ "_bits;\r\n\r\n";
+				temp += "} __"+cm.getName().toLowerCase()+ "_" + cr.getName().toLowerCase()+ "_bits;\r\n\r\n";
 				this.register += temp;
-				this.addCall("__IO_REG32_BIT", cm.getName() + ",\t\t"+Integer.toHexString((cm.getBaseAddress() + cr.getOffset()))+", __READ_WRITE , " + "__"+cm.getName()+ "_" + cr.getName()+ "_bits");
+				this.addCall("__IO_REG32_BIT", cm.getName() + ",\t\t"+Integer.toHexString((cm.getBaseAddress() + cr.getOffset()))+", __READ_WRITE , " + "__"+cm.getName().toLowerCase()+ "_" + cr.getName().toLowerCase()+ "_bits");
 			}
 		}
 						

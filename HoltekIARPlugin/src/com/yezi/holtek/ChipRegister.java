@@ -8,6 +8,8 @@ public class ChipRegister {
 	private String zone = null;
 	private int Bytesize = 0;
 	private int offset = 0;
+	private String Displaybase = null;
+	
 	private List<RegDomain> domains = new ArrayList<RegDomain>();
 	
 	//private StringBuffer domains = new StringBuffer();
@@ -52,5 +54,9 @@ public class ChipRegister {
 
 	public List<RegDomain> getDomains() {
 		return domains;
+	}
+
+	public String getDisplaybase() {
+		return Displaybase;
 	}
 }
