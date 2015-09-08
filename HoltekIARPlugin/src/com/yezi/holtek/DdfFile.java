@@ -1,6 +1,10 @@
 package com.yezi.holtek;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.Map.Entry;
 
 public class DdfFile implements HolteckPropertiesFile{
 	private String content = "[Sfr]\r\n";
@@ -54,6 +58,23 @@ public class DdfFile implements HolteckPropertiesFile{
 		}
 		//[InterruptList],这个东西直接复制过去就好了吧。
 		//这里缺一个group注释
+		
+		//interrupt
+		content += "[InterruptList]\r\n";
+		Properties p = new Properties();
+		try {
+			p.load(new FileInputStream(chip.getPath() + "\\dInterrupt.properties"));
+			int i = 0;
+			for(Entry e : p.entrySet()) { //Interrupt0   = NMI            0x008
+				String temp = "";
+				temp = "Interrupt" + i + "\t=\t" + e.getKey() + "\t\t0x" + Integer.toHexString((Integer.parseInt(e.getValue().toString()) * 4)).toUpperCase() + "\r\n";
+				i++;
+				content += temp;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		fa = new FileAssistor(chip.getPath() + "\\debugger\\Holtek\\" + chip.getChipName() + ".ddf");
 		fa.outputFile(content);

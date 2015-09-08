@@ -1,10 +1,10 @@
 package com.yezi.holtek;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 public class HFile implements HolteckPropertiesFile{
 
@@ -14,6 +14,8 @@ public class HFile implements HolteckPropertiesFile{
 	private String ifdef = "";
 	private String call = "";
 	private String register = "";
+	private String interruptList = "";
+	
 	private String getContent() {
 		String content = "";
 		content += this.include;
@@ -23,7 +25,8 @@ public class HFile implements HolteckPropertiesFile{
 		}*/
 		content += register;
 		content += "#endif\r\n\r\n";
-		content += call;
+		content += call + "\r\n";
+		content += interruptList;
 		
 		return content;
 	}
@@ -93,7 +96,18 @@ public class HFile implements HolteckPropertiesFile{
 				
 			}
 		}
-						
+		//interrupt
+		
+		Properties p = new Properties();
+		try {
+			p.load(new FileInputStream(chip.getPath() + "\\hInterrupt.properties"));
+			for(Entry e : p.entrySet()) {
+				this.interruptList += "#define " + e.getKey() + "\t" + e.getValue() + "\r\n";
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.createFile("io" + chip.getChipName());
 		return false;
 	}
