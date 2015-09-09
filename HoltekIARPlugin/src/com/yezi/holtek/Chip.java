@@ -25,7 +25,7 @@ public class Chip {
 		// TODO Auto-generated constructor stub
 		this.path = path;
 		this.chipName = chipName;
-		codeRange = "0x" + Integer.toHexString((Integer.parseInt(BlockSize) * 1024));
+		codeRange = "0x" + Integer.toHexString((Integer.parseInt(BlockSize) * 1024) - 1);
 		this.RAMSize = RAMSize;
 		this.BlockSize = BlockSize;
 		this.chipModules = new ArrayList<ChipModule>();
