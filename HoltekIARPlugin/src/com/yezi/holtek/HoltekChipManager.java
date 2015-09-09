@@ -80,7 +80,19 @@ public class HoltekChipManager {
 					if(!ff.isDirectory()) {
 						ff.delete();
 					}
-				}	
+				}
+				
+				//删除第二阶段的相关文件
+				File td = new File(f.getPath() + "\\debugger\\Holtek\\"+f.getName()+".ddf");
+				if(td.exists())
+					td.delete();
+				td = new File(f.getPath() + "\\debugger\\Holtek");
+				if(td.exists())
+					td.delete();
+				td = new File(f.getPath() + "\\debugger");
+				if(td.exists())
+					td.delete();
+				
 			}else {
 				File pro = new File(f.getPath() + "\\chip.properties");
 				FileInputStream fis = null;
