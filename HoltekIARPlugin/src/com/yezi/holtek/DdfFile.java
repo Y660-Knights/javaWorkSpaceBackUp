@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 
 public class DdfFile implements HolteckPropertiesFile{
@@ -61,16 +64,23 @@ public class DdfFile implements HolteckPropertiesFile{
 		
 		//interrupt
 		content += "[InterruptList]\r\n";
-		Properties p = new Properties();
+		PropertiesUtil p = new PropertiesUtil();
 		try {
 			p.load(new FileInputStream(chip.getPath() + "\\dInterrupt.properties"));
 			int i = 0;
-			for(Entry e : p.entrySet()) { //Interrupt0   = NMI            0x008
+			for(Object k : p.getKeyList()) {
+				Object v = p.get(k);
+				String temp = "";
+				temp = "Interrupt" + i + "\t=\t" + k.toString() + "\t\t0x" + Integer.toHexString((Integer.parseInt(v.toString()) * 4)).toUpperCase() + "\r\n";
+				i++;
+				content += temp;
+			}
+/*			for(Entry e : p.entrySet()) { //Interrupt0   = NMI            0x008
 				String temp = "";
 				temp = "Interrupt" + i + "\t=\t" + e.getKey() + "\t\t0x" + Integer.toHexString((Integer.parseInt(e.getValue().toString()) * 4)).toUpperCase() + "\r\n";
 				i++;
 				content += temp;
-			}
+			}*/
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

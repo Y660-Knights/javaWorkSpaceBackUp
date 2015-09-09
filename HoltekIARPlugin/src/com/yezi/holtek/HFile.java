@@ -104,12 +104,19 @@ public class HFile implements HolteckPropertiesFile{
 		}
 		//interrupt
 		
-		Properties p = new Properties();
+		PropertiesUtil p = new PropertiesUtil();
 		try {
 			p.load(new FileInputStream(chip.getPath() + "\\hInterrupt.properties"));
-			for(Entry e : p.entrySet()) {
+			
+			for(Object k : p.getKeyList()) {
+				Object v = p.get(k);
+				this.interruptList += "#define " + k.toString() + "\t" + v.toString() + "\r\n";
+			}
+			
+/*			for(Entry e : p.entrySet()) {
 				this.interruptList += "#define " + e.getKey() + "\t" + e.getValue() + "\r\n";
 			}
+			*/
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
