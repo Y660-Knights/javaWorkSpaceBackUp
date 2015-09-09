@@ -37,18 +37,7 @@ public class Chip {
 		this.chipModules = new ArrayList<ChipModule>();
 
 		this.loadChipModules();
-/*
-		System.out.println(this.chipName + ":" + this.chipModules.size());
-		for (ChipModule cm : chipModules) {
-			System.out.println(" " + cm.getName() + ":" + cm.getChipRegisterSize());
-			for (ChipRegister cr : cm.getChipRegisters()) {
-				System.out.println("  " + cr.getName() + ":" + cr.getRegDomainSize());
-				for (RegDomain rd : cr.getRegDomains()) {
-					System.out.println("   " + rd.getName() + ":" + rd.getBitRangeStart() + "-" + rd.getBitRangeEnd());
-				}
-			}
-		}
-		System.out.println();*/
+
 	}
 
 	private void loadChipModules() {

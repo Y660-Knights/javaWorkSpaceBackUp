@@ -78,7 +78,8 @@ public class DdfFile implements HolteckPropertiesFile{
 		
 		fa = new FileAssistor(chip.getPath() + "\\debugger\\Holtek\\" + chip.getChipName() + ".ddf");
 		fa.outputFile(content);
-		return false;
+		content = "";
+		return true;
 	}
 
 }

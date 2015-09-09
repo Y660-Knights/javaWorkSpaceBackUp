@@ -16,17 +16,23 @@ public class HFile implements HolteckPropertiesFile{
 	private String register = "";
 	private String interruptList = "";
 	
-	private String getContent() {
+	private String getContent() { //记得清空数据
 		String content = "";
 		content += this.include;
+		this.include = "";
+		
 		content += this.ifdef;
-/*		for(ChipRegister f : this.chipRegister) {
-			content += f.getTypedefText();
-		}*/
-		content += register;
+		this.ifdef = "";
+		
+		content += this.register;
+		this.register = "";
+		
 		content += "#endif\r\n\r\n";
-		content += call + "\r\n";
-		content += interruptList;
+		content += this.call + "\r\n";
+		this.call = "";
+		
+		content += this.interruptList;
+		this.interruptList = "";
 		
 		return content;
 	}

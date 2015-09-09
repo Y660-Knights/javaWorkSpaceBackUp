@@ -23,40 +23,25 @@ public class HoltekChipManager {
 	private static HoltekChipManager manager = null;
 	private List<Chip> chips = new ArrayList<Chip>();
 	private FileAssistor fa = null;
-	private Properties p = new Properties();
+	private Properties p = new Properties(); 
+	private boolean release = false;
+	private String path = "";
 	
-	private HoltekChipManager(String path) {
-		fa = new FileAssistor(path);
-		for(File f : fa.getPathDirectory()) {
-			if(f.getName().equals(".svn"))
-				continue;
-			//chipNames.add(f.getName());
-			File pro = new File(f.getPath() + "\\chip.properties");
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(pro);
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				p.load(fis);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			Chip c = new Chip(f.getPath(),f.getName(),p.getProperty("RAMSize"),p.getProperty("BlockSize"));
-			this.chips.add(c);
-		}		
+	private HoltekChipManager() {
+
 	}
 		
-	public static HoltekChipManager getInatance(String path) {
+	public static HoltekChipManager getInatance() {
 		if(manager == null)
-			manager = new HoltekChipManager(path);
+			manager = new HoltekChipManager();
+		
 		return manager;
 	}
 	
 	public boolean outputIARPluginFile() {
+		if(this.isRelease())
+			return false;
+		
 		List<HolteckPropertiesFile> hpfs = new ArrayList<>();
 		hpfs.add(new I79File());
 		hpfs.add(new MenuFile());
@@ -70,7 +55,50 @@ public class HoltekChipManager {
 				hpf.create(c);
 			}
 		}
-				
 		return true;
+	}
+
+	public boolean isRelease() {
+		return release;
+	}
+
+	public void setRelease(boolean release) {
+		this.release = release;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+		fa = new FileAssistor(this.path);
+		for(File f : fa.getPathDirectory()) {
+			if(f.getName().equals(".svn"))
+				continue;
+			//chipNames.add(f.getName());
+			
+			//不是文件夹的统统删除
+			if(this.release) {
+				for(File ff : f.listFiles()) {
+					if(!ff.isDirectory()) {
+						ff.delete();
+					}
+				}	
+			}else {
+				File pro = new File(f.getPath() + "\\chip.properties");
+				FileInputStream fis = null;
+				try {
+					fis = new FileInputStream(pro);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					p.load(fis);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				Chip c = new Chip(f.getPath(),f.getName(),p.getProperty("RAMSize"),p.getProperty("BlockSize"));
+				this.chips.add(c);
+			}
+		}		
 	}
 }
