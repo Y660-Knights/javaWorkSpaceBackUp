@@ -3,20 +3,13 @@ package com.yezi.holtek;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.ini4j.Wini;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
 import org.textmining.text.extraction.WordExtractor;
 
 public class Chip {
@@ -32,6 +25,7 @@ public class Chip {
 		// TODO Auto-generated constructor stub
 		this.path = path;
 		this.chipName = chipName;
+		codeRange = "0x" + Integer.toHexString((Integer.parseInt(BlockSize) * 1024));
 		this.RAMSize = RAMSize;
 		this.BlockSize = BlockSize;
 		this.chipModules = new ArrayList<ChipModule>();
