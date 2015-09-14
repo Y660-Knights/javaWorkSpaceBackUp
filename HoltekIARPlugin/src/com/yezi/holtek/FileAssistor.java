@@ -72,6 +72,16 @@ public class FileAssistor {
 		
 		return true;
 	}
-	
+
+	public void copyPath2Path(String src, String dest) {
+		// TODO Auto-generated method stub
+		File fsrc = new File(src);
+		
+		for(File f : fsrc.listFiles()) {
+			if(f != null && f.exists() && !f.isDirectory()) {
+				f.renameTo(new File(dest + "\\" + f.getName()));
+			}
+		}
+	}
 	
 }

@@ -34,7 +34,7 @@ public class I79File implements HolteckPropertiesFile{
 			ini.put("CHIP", "armsupport", "false");
 			ini.put("CHIP", "fpu", "None");
 
-			ini.put("CORE", "name", "Cortex-M3");
+			ini.put("CORE", "name", "Cortex-M0");
 
 			ini.put("DDF FILE", "name", "Holtek\\" + chip.getChipName() + ".ddf");
 
