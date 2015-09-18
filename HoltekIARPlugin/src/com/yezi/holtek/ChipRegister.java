@@ -23,6 +23,15 @@ public class ChipRegister {
 		this.Displaybase = "base=16";
 	}
 	
+	public ChipRegister(String name, String offset) {
+		int tba = Integer.parseUnsignedInt((offset.substring(2, offset.length())), 16);
+		this.name = name;
+		this.offset = tba;
+		this.zone = "Memory";
+		this.Bytesize = 4;
+		this.Displaybase = "base=16";
+	}
+
 	public boolean addDomain(RegDomain rd) {
 		//this.domains.insert(0, "\r\n\t__REG32\t\t" + domain);
 		this.domains.add(0,rd);

@@ -16,6 +16,14 @@ public class ChipModule {
 		this.chipRegister = new ArrayList<ChipRegister>();
 	}
 
+	public ChipModule(String name, String modulePath, String baseAddress) {
+		this.name = name;
+		this.modulePath = modulePath;
+		int tba = Integer.parseUnsignedInt((baseAddress.substring(2, baseAddress.length())), 16);
+		this.baseAddress = tba;
+		this.chipRegister = new ArrayList<ChipRegister>();
+	}
+
 	public String getModulePath() {
 		return modulePath;
 	}

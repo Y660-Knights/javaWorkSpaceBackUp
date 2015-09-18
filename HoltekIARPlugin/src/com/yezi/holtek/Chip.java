@@ -4,12 +4,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 import org.textmining.text.extraction.WordExtractor;
 
 public class Chip {
@@ -39,6 +44,40 @@ public class Chip {
 		if (!file.isDirectory())
 			return;
 
+		// 加载xml中的寄存器
+		File file2 = new File(file.getParent() + "\\NVIC.xml");
+		ChipModule cm2 = null;
+		try {
+			SAXBuilder builder = new SAXBuilder();
+			// InputStream in =
+			// Holtek.class.getClassLoader().getResourceAsStream("NVIC.xml");
+			InputStream in = new FileInputStream(file2);
+			Document doc = builder.build(in);
+			// 获取根节点-模块名字
+			Element root = doc.getRootElement();
+			cm2 = new ChipModule(root.getName(), this.path, root.getAttributeValue("baseAddress"));
+
+			for (Element e : root.getChildren()) {// 获取子节点-寄存器
+				String name = e.getName();
+				String offset = e.getAttributeValue("offset");
+				ChipRegister cr = new ChipRegister(name, offset);
+				for (Element e2 : e.getChildren()) {
+					String start = e2.getAttributeValue("start");
+					String end = e2.getAttributeValue("end");
+
+					RegDomain rd = new RegDomain(start, end, e2.getName());
+					cr.addDomain(rd);
+				}
+				cm2.addChipRegister(cr);
+			}
+			this.chipModules.add(cm2);
+		} catch (JDOMException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// 加载doc中的寄存器
 		for (File f : file.listFiles()) {
 			if (!f.isDirectory()) {
 				Pattern p = Pattern.compile("_([\\w&&[^_]]+).doc");
@@ -112,13 +151,13 @@ public class Chip {
 		Pattern p = Pattern.compile("\\r\\n.+");
 		Matcher m = p.matcher(str);
 
-		int matchCount = 0,matchCount2 = 0;
+		int matchCount = 0, matchCount2 = 0;
 		Pattern p1 = Pattern.compile("Register ?\\d? ?\\((\\w+)\\)");
 		Matcher m1 = null;
-		
-/*		if(cm.getName().equals("SPI")) 
-			System.out.println();		
-		*/
+
+		/*
+		 * if(cm.getName().equals("SPI")) System.out.println();
+		 */
 		while (m.find()) {
 			String line = m.group().trim();
 			m1 = p1.matcher(line);
@@ -126,10 +165,10 @@ public class Chip {
 				matchCount++;
 			}
 		}
-		
+
 		m = p.matcher(str);
 		p1 = Pattern.compile("Register ?\\d? ?[–||-] ?\\(?(\\w+)\\)?");
-	  //p1 = Pattern.compile("Register ?\\d? ?[–||-] ?\\(?(\\w+)\\)?");
+		// p1 = Pattern.compile("Register ?\\d? ?[–||-] ?\\(?(\\w+)\\)?");
 		while (m.find()) {
 			String line = m.group().trim();
 			m1 = p1.matcher(line);
@@ -137,14 +176,14 @@ public class Chip {
 				matchCount2++;
 			}
 		}
-		
+
 		if (matchCount > matchCount2) { // 最少有两个寄存器,说明该表达式正确
 			p1 = Pattern.compile("Register ?\\d? ?\\((\\w+)\\)");
 			// System.out.println("Reg count = " + matchCount);
 		} else { // 更换表达式
 			p1 = Pattern.compile("Register ?\\d? ?[–||-] ?\\(?(\\w+)\\)?");
 		}
-		
+
 		m = p.matcher(str);
 		while (m.find()) {
 			// 去掉换行符等特殊符号
@@ -152,15 +191,16 @@ public class Chip {
 			line = m.group().trim();
 			if (line.length() < 6)
 				continue;
-			
-/*			if(cm.getName().equals("GPTM")) 
-				System.out.println();		
-			*/
-			{	//因为这个寄存器是在最开始，所以不用管
-				// 1.5.1	EXTI Interrupt Configuration Register n – EXTICFGRn, n = 0 ~ 15
+
+			/*
+			 * if(cm.getName().equals("GPTM")) System.out.println();
+			 */
+			{ // 因为这个寄存器是在最开始，所以不用管
+				// 1.5.1 EXTI Interrupt Configuration Register n – EXTICFGRn, n
+				// = 0 ~ 15
 				Pattern pt = Pattern.compile("Register ?n ?– ?(\\w+)n, n = (\\d) ~ (\\d{0,3})");
 				m1 = pt.matcher(line);
-				
+
 				if (m1.find()) {
 					String namet = m1.group(1);
 					int s, e, startOffset = 0;
@@ -179,9 +219,9 @@ public class Chip {
 						}
 					}
 					// 找域名和域名长度
-					while (m.find()) {						
+					while (m.find()) {
 						line = m.group().trim();
-						if(line.length() < 6)
+						if (line.length() < 6)
 							continue;
 						Pattern p2 = Pattern.compile("\\[(\\d{1,2}):?(\\d{0,2})\\](\\w+)");
 						Matcher m2 = p2.matcher(line);
@@ -213,7 +253,7 @@ public class Chip {
 							String n = rd.getName();
 							StringBuffer sbn = new StringBuffer(n);
 							int t = n.indexOf('n');
-							sbn.replace(t, t+1, "" + i);
+							sbn.replace(t, t + 1, "" + i);
 							n = sbn.toString();
 							RegDomain rdt = new RegDomain(rd.getBitRangeStart(), rd.getBitRangeEnd(), n + i);
 							crt.addDomain(rdt);
@@ -221,7 +261,8 @@ public class Chip {
 						cm.addChipRegister(crt);
 					}
 				}
-				// 1.5.1	EXTI Interrupt Configuration Register n – EXTICFGRn, n = 0 ~ 15
+				// 1.5.1 EXTI Interrupt Configuration Register n – EXTICFGRn, n
+				// = 0 ~ 15
 			}
 			m1 = p1.matcher(line);
 			while (m1.find(0)) {// 找寄存器的名字
@@ -245,11 +286,11 @@ public class Chip {
 						break;
 					}
 				}
-				
+
 				ChipRegister cr = new ChipRegister(regName, offset);
 				cm.addChipRegister(cr);
 				boolean isSpecailRegFind = false;
-				
+
 				while (m.find()) {// 获取全文的下一行
 					line = m.group().trim();
 					// [29:28]URPCLK
@@ -257,9 +298,11 @@ public class Chip {
 					m1 = p1.matcher(line);
 					if (m1.find())
 						break;
-					
-					Pattern p2 = Pattern.compile("\\[(\\d{1,2}):?(\\d{0,2})\\](\\w+)\\[?\\d{0,2}:?\\d{0,2}\\]??\\w* ?\\w* ?\\w* ?\\(?n? ?=? ?(\\d{0,2}) ?~? ?(\\d{0,2})");
-					//Pattern p2 = Pattern.compile("\\[(\\d{1,2}):?(\\d{0,2})\\](\\w+)");
+
+					Pattern p2 = Pattern.compile(
+							"\\[(\\d{1,2}):?(\\d{0,2})\\](\\w+)\\[?\\d{0,2}:?\\d{0,2}\\]??\\w* ?\\w* ?\\w* ?\\(?n? ?=? ?(\\d{0,2}) ?~? ?(\\d{0,2})");
+					// Pattern p2 =
+					// Pattern.compile("\\[(\\d{1,2}):?(\\d{0,2})\\](\\w+)");
 					Matcher m2 = p2.matcher(line);
 					while (m2.find()) { //
 						String domain;
@@ -277,32 +320,34 @@ public class Chip {
 						 * for(int i = 0; i < m2.groupCount(); i++) {
 						 * System.out.println(m2.group(i+1)); }
 						 */
-						//[31:0]	EXTInPIN[3:0] EXTIn Pin Selection (n = 0 ~ 7) 这种特殊域名的写法
-						//if(domain.equals("EXTInPIN"))
-						if(m2.group(4).length() > 0 && m2.group(5).length() > 0) { //说明是特殊写法
+						// [31:0] EXTInPIN[3:0] EXTIn Pin Selection (n = 0 ~ 7)
+						// 这种特殊域名的写法
+						// if(domain.equals("EXTInPIN"))
+						if (m2.group(4).length() > 0 && m2.group(5).length() > 0) { // 说明是特殊写法
 							int na = Integer.parseInt(m2.group(4));
 							int nb = Integer.parseInt(m2.group(5));
 							int i = nb;
 							na = (nb - na + 1);
 							nb = 32 / na;
-							
-							for(int j = 0; j < na; j ++) {
-									String n = domain;
-									StringBuffer sbn = new StringBuffer(n);									
-									int t = n.indexOf('n');
-									sbn.replace(t, t+1, "" + (i - j));
-									n = sbn.toString();
-									RegDomain rdt = new RegDomain(end - nb + 1, end, n);
-									end -= nb;
-									cr.addDomain(rdt);
+
+							for (int j = 0; j < na; j++) {
+								String n = domain;
+								StringBuffer sbn = new StringBuffer(n);
+								int t = n.indexOf('n');
+								sbn.replace(t, t + 1, "" + (i - j));
+								n = sbn.toString();
+								RegDomain rdt = new RegDomain(end - nb + 1, end, n);
+								end -= nb;
+								cr.addDomain(rdt);
 							}
 						} else {
 							RegDomain rd = new RegDomain(start, end, domain);
-							cr.addDomain(rd);								
+							cr.addDomain(rd);
 						}
 					}
 
-					// 如果是特殊的写法 ADC Conversion Data Register y – ADCDRy, y = 0 ~ 7
+					// 如果是特殊的写法 ADC Conversion Data Register y – ADCDRy, y = 0 ~
+					// 7
 					Pattern pt = Pattern.compile("Register ?y ?– ?(\\w+)y, y = (\\d) ~ (\\d)");
 					m1 = pt.matcher(line);
 					if (m1.find()) {
@@ -364,9 +409,9 @@ public class Chip {
 							cm.addChipRegister(crt);
 						}
 					}
-					// 如果是特殊的写法 ADC Conversion Data Register y – ADCDRy, y = 0 ~ 7
-					
-					
+					// 如果是特殊的写法 ADC Conversion Data Register y – ADCDRy, y = 0 ~
+					// 7
+
 					// 如果是特殊的写法 Custom ID Register n (CIDRn, n = 0 ~3)
 					pt = Pattern.compile("Register ?n ?\\((\\w+)n, n = (\\d) ~ ?(\\d)\\)");
 					m1 = pt.matcher(line);
@@ -426,63 +471,67 @@ public class Chip {
 						}
 					}
 					// 如果是特殊的写法 Custom ID Register n (CIDRn, n = 0 ~3)
-					
-					if(isSpecailRegFind)
+
+					if (isSpecailRegFind)
 						break;
 				}
-				
-				//处理AB 寄存器情况
-				if(regName.equals("GPxCFGLR".toUpperCase())) {
-					ChipRegister crt,crt2 = null;
-					crt = cm.getChipRegisters().get(cm.getChipRegisterSize() -1);
+
+				// 处理AB 寄存器情况
+				if (regName.equals("GPxCFGLR".toUpperCase())) {
+					ChipRegister crt, crt2 = null;
+					crt = cm.getChipRegisters().get(cm.getChipRegisterSize() - 1);
 					cm.getChipRegisters().remove(crt);
 					String name = "GPACFGLR";
 					crt2 = new ChipRegister(name, crt.getOffset());
-					/*for(RegDomain rdt : crt.getRegDomains()) {
-						crt2.addDomain(rdt);
-					}*/
-					for(int i = 0; i < 8; i++) {
+					/*
+					 * for(RegDomain rdt : crt.getRegDomains()) {
+					 * crt2.addDomain(rdt); }
+					 */
+					for (int i = 0; i < 8; i++) {
 						String dn = "PACFG";
-						RegDomain rdt = new RegDomain(32 - (i + 1) * 4 , 32 - i * 4 -1, dn + (7-i));
+						RegDomain rdt = new RegDomain(32 - (i + 1) * 4, 32 - i * 4 - 1, dn + (7 - i));
 						crt2.addDomain(rdt);
 					}
-					cm.addChipRegister(crt2);					
+					cm.addChipRegister(crt2);
 					name = "GPBCFGLR";
 					crt2 = new ChipRegister(name, crt.getOffset() + 4);
-					for(int i = 0; i < 8; i++) {
+					for (int i = 0; i < 8; i++) {
 						String dn = "PBCFG";
-						RegDomain rdt = new RegDomain(32 - (i + 1) * 4 , 32 - i * 4 -1, dn + (7-i));
+						RegDomain rdt = new RegDomain(32 - (i + 1) * 4, 32 - i * 4 - 1, dn + (7 - i));
 						crt2.addDomain(rdt);
 					}
-/*					for(RegDomain rdt : crt.getRegDomains()) {
-						crt2.addDomain(rdt);
-					}*/
+					/*
+					 * for(RegDomain rdt : crt.getRegDomains()) {
+					 * crt2.addDomain(rdt); }
+					 */
 					cm.addChipRegister(crt2);
 				}
-				//处理AB 寄存器情况
-				if(regName.equals("GPXCFGHR".toUpperCase())) {
-					ChipRegister crt,crt2 = null;
-					crt = cm.getChipRegisters().get(cm.getChipRegisterSize() -1);
+				// 处理AB 寄存器情况
+				if (regName.equals("GPXCFGHR".toUpperCase())) {
+					ChipRegister crt, crt2 = null;
+					crt = cm.getChipRegisters().get(cm.getChipRegisterSize() - 1);
 					cm.getChipRegisters().remove(crt);
 					String name = "GPACFGHR";
 					crt2 = new ChipRegister(name, crt.getOffset());
-/*					for(RegDomain rdt : crt.getRegDomains()) {
-						crt2.addDomain(rdt);
-					}*/
-					for(int i = 0; i < 8; i++) {
+					/*
+					 * for(RegDomain rdt : crt.getRegDomains()) {
+					 * crt2.addDomain(rdt); }
+					 */
+					for (int i = 0; i < 8; i++) {
 						String dn = "PACFG";
-						RegDomain rdt = new RegDomain(32 - (i + 1) * 4 , 32 - i * 4 -1, dn + ((7-i) + 8));
+						RegDomain rdt = new RegDomain(32 - (i + 1) * 4, 32 - i * 4 - 1, dn + ((7 - i) + 8));
 						crt2.addDomain(rdt);
 					}
-					cm.addChipRegister(crt2);					
+					cm.addChipRegister(crt2);
 					name = "GPBCFGHR";
 					crt2 = new ChipRegister(name, crt.getOffset() + 4);
-/*					for(RegDomain rdt : crt.getRegDomains()) {
-						crt2.addDomain(rdt);
-					}*/
-					for(int i = 0; i < 8; i++) {
+					/*
+					 * for(RegDomain rdt : crt.getRegDomains()) {
+					 * crt2.addDomain(rdt); }
+					 */
+					for (int i = 0; i < 8; i++) {
 						String dn = "PBCFG";
-						RegDomain rdt = new RegDomain(32 - (i + 1) * 4 , 32 - i * 4 -1, dn + ((7-i) + 8));
+						RegDomain rdt = new RegDomain(32 - (i + 1) * 4, 32 - i * 4 - 1, dn + ((7 - i) + 8));
 						crt2.addDomain(rdt);
 					}
 					cm.addChipRegister(crt2);

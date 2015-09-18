@@ -11,6 +11,14 @@ public class RegDomain {
 		this.name = name;
 	}
 
+	public RegDomain(String bitRangeStart, String bitRangeEnd, String name) {
+		int t1 = Integer.parseUnsignedInt(bitRangeStart);
+		int t2 = Integer.parseUnsignedInt(bitRangeEnd);
+		this.bitRangeStart = t1;
+		this.bitRangeEnd = t2;
+		this.name = name;
+	}
+
 	public int getBitRangeStart() {
 		return bitRangeStart;
 	}

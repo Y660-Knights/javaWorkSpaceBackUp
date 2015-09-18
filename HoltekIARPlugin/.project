@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/NVIC.XML</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/share/IAR%E6%B7%BB%E5%8A%A0M0%E8%8A%AF%E7%89%87%E5%9E%8B%E5%8F%B7/Holteck/NVIC.XML</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
