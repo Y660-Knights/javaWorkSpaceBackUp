@@ -79,7 +79,10 @@ public class FileAssistor {
 		
 		for(File f : fsrc.listFiles()) {
 			if(f != null && f.exists() && !f.isDirectory()) {
-				f.renameTo(new File(dest + "\\" + f.getName()));
+				File ft = new File(dest + "\\" + f.getName());
+				if(ft.exists())
+					ft.delete();				
+				f.renameTo(ft);	
 			}
 		}
 	}

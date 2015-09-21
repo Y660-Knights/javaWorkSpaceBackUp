@@ -45,36 +45,40 @@ public class Chip {
 			return;
 
 		// 加载xml中的寄存器
-		File file2 = new File(file.getParent() + "\\NVIC.xml");
-		ChipModule cm2 = null;
-		try {
-			SAXBuilder builder = new SAXBuilder();
-			// InputStream in =
-			// Holtek.class.getClassLoader().getResourceAsStream("NVIC.xml");
-			InputStream in = new FileInputStream(file2);
-			Document doc = builder.build(in);
-			// 获取根节点-模块名字
-			Element root = doc.getRootElement();
-			cm2 = new ChipModule(root.getName(), this.path, root.getAttributeValue("baseAddress"));
+		for (File file2 : new File(file.getParent()).listFiles()) {
+			if(file2 == null)
+				continue;			
+			if (!file2.isDirectory() && file2.getName()
+					.substring(file2.getName().length() - 4, file2.getName().length()).toLowerCase().equals(".xml")) {
+				ChipModule cm2 = null;
+				try {
+					SAXBuilder builder = new SAXBuilder();
+					InputStream in = new FileInputStream(file2);
+					Document doc = builder.build(in);
+					// 获取根节点-模块名字
+					Element root = doc.getRootElement();
+					cm2 = new ChipModule(root.getName(), this.path, root.getAttributeValue("baseAddress"));
 
-			for (Element e : root.getChildren()) {// 获取子节点-寄存器
-				String name = e.getName();
-				String offset = e.getAttributeValue("offset");
-				ChipRegister cr = new ChipRegister(name, offset);
-				for (Element e2 : e.getChildren()) {
-					String start = e2.getAttributeValue("start");
-					String end = e2.getAttributeValue("end");
+					for (Element e : root.getChildren()) {// 获取子节点-寄存器
+						String name = e.getName();
+						String offset = e.getAttributeValue("offset");
+						ChipRegister cr = new ChipRegister(name, offset);
+						for (Element e2 : e.getChildren()) {
+							String start = e2.getAttributeValue("start");
+							String end = e2.getAttributeValue("end");
 
-					RegDomain rd = new RegDomain(start, end, e2.getName());
-					cr.addDomain(rd);
+							RegDomain rd = new RegDomain(start, end, e2.getName());
+							cr.addDomain(rd);
+						}
+						cm2.addChipRegister(cr);
+					}
+					this.chipModules.add(cm2);
+				} catch (JDOMException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				cm2.addChipRegister(cr);
 			}
-			this.chipModules.add(cm2);
-		} catch (JDOMException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 		// 加载doc中的寄存器

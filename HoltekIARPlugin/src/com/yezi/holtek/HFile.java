@@ -78,6 +78,12 @@ public class HFile implements HolteckPropertiesFile{
 				continue;
 			for(ChipRegister cr : cm.getChipRegisters()) {
 				String temp = "typedef struct {\r\n";
+				String regName = "";
+				if(cm.getName().equals("OTHER")) {
+					regName = "__" + cr.getName().toLowerCase();
+				} else {
+					regName = "__"+cm.getName().toLowerCase()+ "_" + cr.getName().toLowerCase();
+				}
 				int i = 0,count = 32,n = 0;
 				for(RegDomain rd : cr.getDomains()) { //添加域名和域名长度,Reserved怎么解决呢？
 					if(rd.getBitRangeStart() > i) { //说明有Reserved
@@ -93,10 +99,10 @@ public class HFile implements HolteckPropertiesFile{
 				if(count > 0) {
 					temp += "\t__REG32\t\t\t"+" : " +count+ ";\r\n";
 				}
-				temp += "} __"+cm.getName().toLowerCase()+ "_" + cr.getName().toLowerCase()+ "_bits;\r\n\r\n";
+				temp += "} " + regName +"_bits;\r\n\r\n";
 				this.register += temp;
 				this.addCall("__IO_REG32_BIT", cm.getName() +"_"+cr.getName() + ",\t\t0x"+Integer.toHexString((cm.getBaseAddress() + cr.getOffset())).toUpperCase()+", __READ_WRITE , " 
-								+ "__"+cm.getName().toLowerCase()+ "_" + cr.getName().toLowerCase()+ "_bits");
+								+ regName + "_bits");
 				
 			}
 		}
