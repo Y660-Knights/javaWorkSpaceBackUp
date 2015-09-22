@@ -35,7 +35,7 @@ public class HoltekChipManager {
 		hpfs.add(new FlashFile());
 		hpfs.add(new OpflashFile());
 		hpfs.add(new HFile());
-		hpfs.add(new DdfFile());
+		hpfs.add(new IODdfFile());
 		for (Chip c : chips) {
 			for (HolteckPropertiesFile hpf : hpfs) {
 				hpf.create(c);
