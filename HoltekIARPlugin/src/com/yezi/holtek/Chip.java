@@ -379,8 +379,8 @@ public class Chip {
 								
 								domain = m2.group(7);
 								
-								if( domain.equals("PADIRn") )
-									System.out.println();
+/*								if( domain.equals("PADIRn") )
+									System.out.println();*/
 								
 								if(domain.length() == 0)
 									continue;
