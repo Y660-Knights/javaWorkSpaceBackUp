@@ -704,8 +704,25 @@ public class Chip {
 						crt2.addDomain(rdt);
 					}
 					cm.addChipRegister(crt2);
-				} // 2处理AB 寄存器情况
-					// ------开始---------------------------------------------------------------
+				} // 2处理AB 寄存器情况------结束---------------------------------------------------------------
+				
+				if(cm.getName().equals("EXTI")) {
+					RegDomain rd = cr.getRegDomains().get(0);
+					if(rd.getName().indexOf("n") != -1) {
+						String name = rd.getName();
+						int s,e;
+						e = rd.getBitRangeEnd();
+						s = e;
+						for(int i = 15; i >= 0; i--) {
+							String nt = name.substring(0, name.indexOf("n")) + i+name.substring(name.indexOf("n") +1 ,name.length());
+							RegDomain rdt = new RegDomain(s, e, nt);
+							e -- ;
+							s = e;
+							cr.addDomain(rdt);
+						}
+						cr.getDomains().remove(rd);
+					}
+				}
 			}
 		}
 	}
