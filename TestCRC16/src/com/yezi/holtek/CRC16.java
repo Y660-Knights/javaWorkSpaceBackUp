@@ -3,11 +3,11 @@ package com.yezi.holtek;
 public class CRC16 {
 
 	public static void main(String[] args) {
-/*		int poly = 0x8005 << 16; //table generate code 
+		
+		int poly = 0x8005 << 16; //table generate code 
 		int dataReg = 0;
 		
 		dataReg = 1;
-		
 		dataReg <<= 16;
 	
 		for (int i = 0; i < 16; i++) {
@@ -20,7 +20,7 @@ public class CRC16 {
 			dataReg ^= poly;
 		}
 		
-		System.out.printf("0x%04X,", (dataReg >> 16) & 0xffff);*/
+		System.out.printf("0x%04X,", (dataReg >> 16) & 0xffff);
 		
 		//下面是反序的crc16
 		
@@ -139,7 +139,7 @@ public class CRC16 {
 				System.out.println();
 		}*/
 		
-		int []crc16Table = {0x0000,0xC0C1,0xC181,0x0140,0xC301,0x03C0,0x0280,0xC241,
+/*		int []crc16Table = {0x0000,0xC0C1,0xC181,0x0140,0xC301,0x03C0,0x0280,0xC241,
 							0xC601,0x06C0,0x0780,0xC741,0x0500,0xC5C1,0xC481,0x0440,
 							0xCC01,0x0CC0,0x0D80,0xCD41,0x0F00,0xCFC1,0xCE81,0x0E40,
 							0x0A00,0xCAC1,0xCB81,0x0B40,0xC901,0x09C0,0x0880,0xC841,
@@ -173,11 +173,12 @@ public class CRC16 {
 							0x8201,0x42C0,0x4380,0x8341,0x4100,0x81C1,0x8081,0x4040,
 							};
 
-		byte testData[] = "Whenever".getBytes();
+		byte testData[] = "W".getBytes();
 		int dataReg = 0;
 		int crc = 0;
 		
-		dataReg = testData[1];
+		if(testData.length > 1)
+			dataReg = testData[1];
 		dataReg <<= 8;
 		dataReg |= testData[0];
 		
@@ -194,6 +195,6 @@ public class CRC16 {
 		}
 		
 		System.out.printf("0x%04X",(dataReg) & 0xffff);		
-		
+		*/
 	}
 }
