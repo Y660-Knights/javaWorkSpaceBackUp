@@ -19,6 +19,7 @@ public class Holtek {
 		String outputPath1 = outputPath + "\\" + outputPathName + "\\devices";
 		String outputPath2 = outputPath + "\\" + outputPathName + "\\flashloader";
 		String outputPath3 = outputPath + "\\" + outputPathName + "\\inc";
+		String outputPath4 = outputPath + "\\" + outputPathName + "\\debugger";
 
 		File temp = new File(outputPath + "\\" + outputPathName);
 		if (!temp.exists()) {
@@ -37,7 +38,12 @@ public class Holtek {
 		if (!temp.exists()) {
 			temp.mkdirs();
 		}
-
+		
+		temp = new File(outputPath4);
+		if (!temp.exists()) {
+			temp.mkdirs();
+		}
+		
 		FileAssistor fa = new FileAssistor(path);
 		for (File f : fa.getPathDirectory()) {
 			if (!f.getName().equals(outputPathName) && !f.getName().equals(".svn")) {
@@ -51,6 +57,10 @@ public class Holtek {
 
 				src = f.getPath() + "\\inc\\Holtek";
 				dest = outputPath3;
+				fa.copyPath2Path(src, dest);
+				
+				src = f.getPath() + "\\debugger\\Holtek";
+				dest = outputPath4;
 				fa.copyPath2Path(src, dest);
 			}
 		}
