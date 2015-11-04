@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.ini4j.Config;
 import org.ini4j.Wini;
 
 public class I79File implements HolteckPropertiesFile{
@@ -26,6 +27,17 @@ public class I79File implements HolteckPropertiesFile{
 			OutputStream os = new FileOutputStream(fIni);
 			os.close();
 			Wini ini = new Wini(fIni);
+			
+/*			Config cfg = Config.getGlobal();
+			cfg.setEmptyOption(true);
+			cfg.setEmptySection(true);
+			cfg.setEscape(false);
+			cfg.setEscapeKeyOnly(true);
+			cfg.setEscapeNewline(false);
+			cfg.setGlobalSection(false);
+			cfg.setComment(false);
+			ini.setConfig(cfg);*/
+			
 			ini.put("FILEFORMAT", "rev", 1.6);
 
 			ini.put("CHIP", "name", chip.getChipName());
@@ -43,8 +55,9 @@ public class I79File implements HolteckPropertiesFile{
 
 			ini.put("FLASH LOADER", "little",
 					"$TOOLKIT_DIR$\\config\\flashloader\\Holtek\\Flash" + chip.getChipName() + ".board");
-
+						
 			ini.store();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
